@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Rol {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // audit_fields
+  created_by  String?
+  created_at  DateTime @default(now())
+  modified_by String?
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  name String?
+  code String  @unique
+
+  users_rol User[] @relation(name: "UserToRol")
+
+  @@map("tbl_rol")
+}
+
+model AcademicProgram {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // audit_fields
+  created_by  String?
+  created_at  DateTime @default(now())
+  modified_by String?
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  name String?
+  code String? @unique
+
+  users_program User[] @relation(name: "UserToProgramAcademic")
+
+  @@map("tbl_academic_program")
+}
+
+model ListType {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // audit_fields
+  created_by  String?
+  created_at  DateTime @default(now())
+  modified_by String?
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  code        String?    @unique
+  name        String
+  description String
+  meta        String?
+  listItem    ListItem[] @relation(name: "ListTypeListItem")
+
+  @@map("list_type")
+}
+
+model ListItem {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // audit_fields
+  created_by  String?
+  created_at  DateTime @default(now())
+  modified_by String?
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  listType    ListType @relation(name: "ListTypeListItem", fields: [listType_id], references: [id])
+  listType_id String   @db.Uuid
+  code        String?  @unique
+  name        String
+  description String
+  meta        String?
+  order       Int?
+
+  users_rol         User[]         @relation(name: "UserToRh")
+  car_types         Car[]          @relation(name: "CarToType")
+  transactions_type Transactions[] @relation(name: "TransactionToType")
+  company_car       Car[]          @relation(name: "CarToCompany")
+
+  @@map("tbl_list_item")
+}
+
+model User {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // audit_fields
+  created_by  String?
+  created_at  DateTime @default(now())
+  modified_by String?
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  full_name    String?
+  last_name    String?
+  email        String    @unique
+  password     String
+  code_student String    @unique
+  document     String?   @unique
+  rol          Rol       @relation(name: "UserToRol", fields: [rol_id], references: [id])
+  rol_id       String    @db.Uuid
+  phone        String?
+  birthdate    DateTime?
+  address      String?
+  rh           ListItem? @relation(name: "UserToRh", fields: [rh_id], references: [id])
+  rh_id        String?   @db.Uuid
+
+  program_academic    AcademicProgram? @relation(name: "UserToProgramAcademic", fields: [program_academic_id], references: [id])
+  program_academic_id String?          @db.Uuid
+
+  bus_driver BusDriver[] @relation(name: "BusDriverToUser")
+  user_qr    UserQR[]    @relation(name: "UserQRToUser")
+
+  transaction_user Transactions[] @relation(name: "TransactionToUser")
+
+  @@map("tbl_user")
+}
