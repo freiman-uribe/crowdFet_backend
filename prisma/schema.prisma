@@ -83,9 +83,6 @@ model ListItem {
   order       Int?
 
   users_rol         User[]         @relation(name: "UserToRh")
-  car_types         Car[]          @relation(name: "CarToType")
-  transactions_type Transactions[] @relation(name: "TransactionToType")
-  company_car       Car[]          @relation(name: "CarToCompany")
 
   @@map("tbl_list_item")
 }
@@ -115,11 +112,6 @@ model User {
 
   program_academic    AcademicProgram? @relation(name: "UserToProgramAcademic", fields: [program_academic_id], references: [id])
   program_academic_id String?          @db.Uuid
-
-  bus_driver BusDriver[] @relation(name: "BusDriverToUser")
-  user_qr    UserQR[]    @relation(name: "UserQRToUser")
-
-  transaction_user Transactions[] @relation(name: "TransactionToUser")
 
   @@map("tbl_user")
 }

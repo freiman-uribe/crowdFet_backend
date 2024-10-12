@@ -14,7 +14,7 @@ async function bootstrap() {
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   });
 
-  console.log('Listening on port ' + 3000);
+  console.log('Listening on port ' + 4000);
 
   const config = new DocumentBuilder()
     .setTitle('BusFet Back')
@@ -26,6 +26,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
 
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();
