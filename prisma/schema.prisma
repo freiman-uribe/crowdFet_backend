@@ -87,6 +87,23 @@ model ListItem {
   @@map("tbl_list_item")
 }
 
+
+model File {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fileName    String  
+  fileType    String  
+  fileSize    Int      
+  fileUrl     String   
+  uploadedAt  DateTime @default(now()) 
+
+  projects Project[]
+  elements Elements[]
+  rewards Reward[]
+}
+
+
+
+
 model User {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   // audit_fields
@@ -110,8 +127,101 @@ model User {
   rh           ListItem? @relation(name: "UserToRh", fields: [rh_id], references: [id])
   rh_id        String?   @db.Uuid
 
+  approvals   Approval[] // Un usuario puede aprobar múltiples proyectos
+
   program_academic    AcademicProgram? @relation(name: "UserToProgramAcademic", fields: [program_academic_id], references: [id])
   program_academic_id String?          @db.Uuid
 
   @@map("tbl_user")
+}
+
+model Project {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title             String   
+  subtitle          String   
+  category          String  
+  subCategory       String   
+  location          String  
+
+  video             String?  
+  fundingAmount     Float    
+  launchDate        DateTime? 
+  campaignDuration  Int    
+  status            String  @default("pending") // 'pending', 'approved', 'rejected', etc.
+  
+  image             File   @relation(fields: [imageId], references: [id])
+  imageId           String  @db.Uuid 
+
+
+  approvals         Approval[]   // Un proyecto puede tener múltiples aprobaciones (de diferentes usuarios)
+
+  rewards           Reward[]  
+  history           History[] 
+
+  
+}
+
+model Reward {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title             String   
+  description       String  
+
+  pledgedAmount     Float   
+  availability      Int     
+  limitTime         DateTime? 
+  content           String   
+  estimatedDelivery DateTime 
+  shipping          Boolean  
+
+  project           Project   @relation(fields: [projectId], references: [id])
+  projectId         String    @db.Uuid  
+
+  image             File   @relation(fields: [imageId], references: [id])
+  imageId           String  @db.Uuid 
+
+  elements          Elements[]
+}
+
+model Elements {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title             String   
+
+  image             File   @relation(fields: [imageId], references: [id])
+  imageId           String  @db.Uuid 
+
+  reward           Reward   @relation(fields: [rewardId], references: [id])
+  rewardId         String    @db.Uuid  
+}
+
+
+model History {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title             String  
+  risksChallenges   String   
+  aiUsage           Boolean 
+  projectHistory    String   
+  faq               String  
+
+  // Relations
+  project           Project   @relation(fields: [projectId], references: [id])
+  projectId         String    @db.Uuid    // Foreign key to the Project model
+}
+
+
+model Approval {
+  id          Int        @id @default(autoincrement())
+  
+  project     Project    @relation(fields: [projectId], references: [id])
+  projectId   String    @db.Uuid  
+  
+
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String    @db.Uuid  
+
+  approvedAt  DateTime   @default(now())
+  
+  comments    String?
+
+  // Estado de la aprobación (aprobado o rechazado)
+  status      String     // 'approved', 'rejected'
 }
