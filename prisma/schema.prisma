@@ -84,6 +84,10 @@ model ListItem {
 
   users_rol         User[]         @relation(name: "UserToRh")
 
+  categories        Project[] @relation(name: "CategoriesToProject")
+
+  sub_categories    Project[] @relation(name: "SubCategoriesToProject")
+
   @@map("tbl_list_item")
 }
 
@@ -138,9 +142,10 @@ model User {
 model Project {
   id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title             String   
-  subtitle          String   
-  category          String  
-  subCategory       String   
+  subtitle          String
+
+
+
   location          String  
 
   video             String?  
@@ -151,6 +156,12 @@ model Project {
   
   image             File   @relation(fields: [imageId], references: [id])
   imageId           String  @db.Uuid 
+
+  category          ListItem @relation(name: "CategoriesToProject", fields: [categoryId], references: [id])
+  categoryId        String @db.Uuid 
+
+  subCategory       ListItem @relation(name: "SubCategoriesToProject", fields: [subCategoryId], references: [id])
+  subCategoryId     String   @db.Uuid 
 
 
   approvals         Approval[]   // Un proyecto puede tener múltiples aprobaciones (de diferentes usuarios)
