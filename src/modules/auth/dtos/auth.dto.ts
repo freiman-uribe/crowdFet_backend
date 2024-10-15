@@ -50,11 +50,6 @@ export class AuthCreateUserDto {
 
   @IsUUID()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Tipo de sangre', example: 'john_doe@gmail.com' })
-  rh: string;
-
-  @IsUUID()
-  @IsNotEmpty()
   @ApiProperty({ description: 'Código del programa', example: '' })
   code_program: string;
 }

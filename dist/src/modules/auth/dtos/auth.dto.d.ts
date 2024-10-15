@@ -9,6 +9,5 @@ export declare class AuthCreateUserDto {
     email: string;
     password: string;
     code_student: string;
-    rh: string;
     code_program: string;
 }

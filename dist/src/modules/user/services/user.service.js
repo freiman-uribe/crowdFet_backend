@@ -19,14 +19,17 @@ let UserService = class UserService {
         this.prisma = prisma;
     }
     async createUser(userData) {
+        console.log('entre');
         const findUser = await this.getByEmail(userData.email);
         const findUserCode = await this.getByCodeStudent(userData.code_student);
         const findUserDocument = await this.getByDocument(userData.document);
         if (findUser || findUserCode || findUserDocument) {
             throw new common_1.HttpException('El usuario ya existe', 400);
         }
+        console.log('entre4');
         const roleStudent = await this.getRolByCode(roles_1.ROLES.STUDENT);
         const passwordEncipted = (0, bcrypt_1.hashSync)(userData.password, 10);
+        console.log('entre3', userData.code_program);
         try {
             const userCreate = await this.prisma.user.create({
                 data: {
@@ -38,7 +41,6 @@ let UserService = class UserService {
                     last_name: userData.last_name,
                     program_academic_id: userData.code_program,
                     rol_id: roleStudent.id,
-                    rh_id: userData.rh,
                     updated_at: new Date(),
                 }
             });
@@ -46,6 +48,7 @@ let UserService = class UserService {
             return userCreate;
         }
         catch (err) {
+            console.log('entre2', err);
             throw new common_1.HttpException(err, 400);
         }
     }

@@ -21,7 +21,6 @@ export class UserService {
    * @throws {HttpException} Si el usuario ya existe.
    */
   async createUser (userData: AuthCreateUserDto): Promise<User> {
-
     const findUser = await this.getByEmail(userData.email)
     const findUserCode = await this.getByCodeStudent(userData.code_student)
     const findUserDocument = await this.getByDocument(userData.document)
@@ -32,6 +31,7 @@ export class UserService {
     const roleStudent = await this.getRolByCode(ROLES.STUDENT);
     const passwordEncipted = hashSync(userData.password, 10)
     try {
+      
       const userCreate = await this.prisma.user.create({
         data: {
           document: userData.document,
@@ -42,10 +42,10 @@ export class UserService {
           last_name: userData.last_name,
           program_academic_id: userData.code_program,
           rol_id: roleStudent.id,
-          rh_id: userData.rh,
           updated_at: new Date(),
         }
       })
+
       delete userCreate.password
       return userCreate
     } catch (err) {

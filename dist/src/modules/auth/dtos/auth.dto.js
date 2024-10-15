@@ -71,12 +71,6 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, swagger_1.ApiProperty)({ description: 'Tipo de sangre', example: 'john_doe@gmail.com' }),
-    __metadata("design:type", String)
-], AuthCreateUserDto.prototype, "rh", void 0);
-__decorate([
-    (0, class_validator_1.IsUUID)(),
-    (0, class_validator_1.IsNotEmpty)(),
     (0, swagger_1.ApiProperty)({ description: 'Código del programa', example: '' }),
     __metadata("design:type", String)
 ], AuthCreateUserDto.prototype, "code_program", void 0);
