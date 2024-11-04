@@ -22,4 +22,12 @@ export class CommonService {
       }
     })
   }
+
+  getListItemFormParent (id:string) {
+    return this.prisma.listItem.findMany({
+      where: {
+        parentId: id
+      },
+    })
+  }
 }

@@ -16,6 +16,7 @@ export declare class CommonService {
             description: string;
             meta: string | null;
             order: number | null;
+            parentId: string | null;
         }[];
     } & {
         id: string;
@@ -29,4 +30,19 @@ export declare class CommonService {
         description: string;
         meta: string | null;
     })[]>;
+    getListItemFormParent(id: string): import(".prisma/client").Prisma.PrismaPromise<{
+        id: string;
+        created_by: string | null;
+        created_at: Date;
+        modified_by: string | null;
+        updated_at: Date;
+        status: boolean;
+        listType_id: string;
+        code: string | null;
+        name: string;
+        description: string;
+        meta: string | null;
+        order: number | null;
+        parentId: string | null;
+    }[]>;
 }

@@ -34,4 +34,11 @@ export class CommonController {
   ): Promise<any> {
     return this.commonService.getListItemForCodesParents(codes);
   }
+
+  @Get('list-item')
+  async getListItemForItem(
+    @Query('id') id: string,
+  ): Promise<any> {
+    return this.commonService.getListItemFormParent(id);
+  }
 }

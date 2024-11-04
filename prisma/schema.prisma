@@ -82,10 +82,12 @@ model ListItem {
   meta        String?
   order       Int?
 
+  parent         ListItem?   @relation("ParentChild", fields: [parentId], references: [id])
+  parentId       String?     @db.Uuid
+  children       ListItem[]  @relation("ParentChild")
+
   users_rol         User[]         @relation(name: "UserToRh")
-
   categories        Project[] @relation(name: "CategoriesToProject")
-
   sub_categories    Project[] @relation(name: "SubCategoriesToProject")
 
   @@map("tbl_list_item")
@@ -144,8 +146,6 @@ model Project {
   title             String   
   subtitle          String
 
-
-
   location          String  
 
   video             String?  
@@ -169,8 +169,17 @@ model Project {
   rewards           Reward[]  
   history           History[] 
 
-  
+  comments           ProjectComments[]   @relation(name: "comments")
 }
+
+model ProjectComments {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  description             String
+  
+  project       Project @relation(name: "comments", fields: [projectId], references: [id])
+  projectId     String   @db.Uuid 
+}
+
 
 model Reward {
   id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid

@@ -28,6 +28,13 @@ let CommonService = class CommonService {
             }
         });
     }
+    getListItemFormParent(id) {
+        return this.prisma.listItem.findMany({
+            where: {
+                parentId: id
+            },
+        });
+    }
 };
 exports.CommonService = CommonService;
 exports.CommonService = CommonService = __decorate([

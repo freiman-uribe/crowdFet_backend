@@ -28,6 +28,9 @@ let CommonController = class CommonController {
     async getListItemForParent(codes) {
         return this.commonService.getListItemForCodesParents(codes);
     }
+    async getListItemForItem(id) {
+        return this.commonService.getListItemFormParent(id);
+    }
 };
 exports.CommonController = CommonController;
 __decorate([
@@ -53,6 +56,13 @@ __decorate([
     __metadata("design:paramtypes", [Array]),
     __metadata("design:returntype", Promise)
 ], CommonController.prototype, "getListItemForParent", null);
+__decorate([
+    (0, common_1.Get)('list-item'),
+    __param(0, (0, common_1.Query)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CommonController.prototype, "getListItemForItem", null);
 exports.CommonController = CommonController = __decorate([
     (0, common_1.Controller)('common'),
     (0, swagger_1.ApiTags)('Controlador de las opciones comunes'),

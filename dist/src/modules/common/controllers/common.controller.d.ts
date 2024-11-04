@@ -15,4 +15,5 @@ export declare class CommonController {
         code: string | null;
     }[]>;
     getListItemForParent(codes: string[]): Promise<any>;
+    getListItemForItem(id: string): Promise<any>;
 }
