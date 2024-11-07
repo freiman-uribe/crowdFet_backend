@@ -107,12 +107,12 @@ export class ProjectService {
   async findAll(page: number = 1, limit: number = 10): Promise<any> {
     const skip = (page - 1) * limit;
     const take = Number(limit);
-    
+
     const [projects, total] = await Promise.all([
       this.prisma.project.findMany({
         skip,
         take,
-        include: { category: true },
+        include: { category: true, image: true },
       }),
       this.prisma.project.count(), // Total de proyectos
     ]);
@@ -123,8 +123,61 @@ export class ProjectService {
       currentPage: page,
       projects: projects.map((project) => ({
         ...project,
+        image: project.image.fileUrl,
         category: project.category.name,
       })),
+    };
+  }
+
+  async findByStatus(page: number = 1, limit: number = 10): Promise<any> {
+    const skip = (page - 1) * limit;
+    const take = Number(limit);
+
+    const [projects, total] = await Promise.all([
+      this.prisma.project.findMany({
+        skip,
+        take,
+        include: { category: true, image: true },
+        where: {
+          // status: "approved",
+          status: "pending",
+        },
+      }),
+      this.prisma.project.count(), // Total de proyectos
+    ]);
+
+    return {
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      projects: projects.map((project) => ({
+        ...project,
+        image: project.image.fileUrl,
+        category: project.category.name,
+      })),
+    };
+  }
+
+  isValidUUID(uuid: string): boolean {
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    return uuidRegex.test(uuid);
+  }
+
+  async findById(id: string,): Promise<any> {
+    if (!this.isValidUUID(id)) {
+      throw new Error("Invalid UUID format");
+    }
+    const project = await this.prisma.project.findUnique({
+      include: { category: true, image: true },
+      where: {
+        id: id,
+      },
+    });
+      
+    return {
+      ...project,
+      image: project.image.fileUrl,
+      category: project.category.name,
     };
   }
 }

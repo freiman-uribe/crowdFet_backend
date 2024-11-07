@@ -40,4 +40,22 @@ export class ProjectController {
   async getProjects(@Query("page") page = 1, @Query("limit") limit = 10) {
     return this.projectService.findAll(page, limit);
   }
+
+  @Get("list")
+  @ApiOperation({
+    summary: "Lista todos los proyectos",
+  })
+  async getListProjects(@Query("page") page = 1, @Query("limit") limit = 10) {
+    return this.projectService.findByStatus(page, limit);
+  }
+
+  @Get("project")
+  @ApiOperation({
+    summary: "Proyecto por id",
+  })
+  async getProjectId(@Query("id") id ) {
+    console.log("id", id);
+    
+    return this.projectService.findById(id);
+  }
 }
