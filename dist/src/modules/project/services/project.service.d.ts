@@ -20,4 +20,8 @@ export declare class ProjectService {
         categoryId: string;
         subCategoryId: string;
     }>;
+    findAll(page?: number, limit?: number): Promise<any>;
+    findByStatus(page?: number, limit?: number): Promise<any>;
+    isValidUUID(uuid: string): boolean;
+    findById(id: string): Promise<any>;
 }

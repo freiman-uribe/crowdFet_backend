@@ -20,23 +20,25 @@ let ProjectService = class ProjectService {
     }
     async createProject(data, files = []) {
         try {
-            const fileImage = files.find(item => (item.fieldname === 'file'));
-            const urlImageProject = await this.s3Servie.uploadFile(fileImage, 'projects-crowd-fet/');
-            const findFileHistory = files.find(item => (item.fieldname === 'history[file]'));
-            const historyFile = await this.s3Servie.uploadFile(findFileHistory, 'projects-crowd-fet/history/');
-            console.log(urlImageProject, 'urlImageProjecturlImageProject');
+            const fileImage = files.find((item) => item.fieldname === "file");
+            const urlImageProject = await this.s3Servie.uploadFile(fileImage, "projects-crowd-fet/");
+            const findFileHistory = files.find((item) => item.fieldname === "history[file]");
+            const historyFile = await this.s3Servie.uploadFile(findFileHistory, "projects-crowd-fet/history/");
+            console.log(urlImageProject, "urlImageProjecturlImageProject");
             let elementsSaving = [];
             for (let index = 0; index < data.elements.length; index++) {
                 const item = data.elements[index];
-                const fileElement = files.find(file => file.fieldname === `elements[${index}][imageId]`);
-                const dataFile = fileElement ? await this.s3Servie.uploadFile(fileElement, 'projects-crowd-fet/elements/') : null;
+                const fileElement = files.find((file) => file.fieldname === `elements[${index}][imageId]`);
+                const dataFile = fileElement
+                    ? await this.s3Servie.uploadFile(fileElement, "projects-crowd-fet/elements/")
+                    : null;
                 elementsSaving.push({
                     title: item.title,
                     imageId: fileElement ? dataFile.id : null,
-                    rewardId: item.rewardId
+                    rewardId: item.rewardId,
                 });
             }
-            console.log(data.history, 'elementsSavingelementsSaving');
+            console.log(data.history, "elementsSavingelementsSaving");
             const project = await this.prisma.project.create({
                 data: {
                     title: data.title,
@@ -45,7 +47,7 @@ let ProjectService = class ProjectService {
                     fundingAmount: Number(data.montoMeta),
                     launchDate: new Date(data.dateLaunch),
                     campaignDuration: new Date(data.durationCampaign),
-                    status: 'pending',
+                    status: "pending",
                     imageId: urlImageProject.id,
                     categoryId: data.categoryId,
                     subCategoryId: data.subCategoryId,
@@ -53,27 +55,94 @@ let ProjectService = class ProjectService {
                     municipalityId: data.municipality,
                     elements: {
                         createMany: {
-                            data: elementsSaving
-                        }
+                            data: elementsSaving,
+                        },
                     },
                     history: {
                         create: {
                             risksChallenges: data.history.riesgos,
-                            aiUsage: data.history.usoIA === 'noActivar' ? false : true,
+                            aiUsage: data.history.usoIA === "noActivar" ? false : true,
                             projectHistoryId: historyFile.id,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             });
-            console.log('Project created:', project);
+            console.log("Project created:", project);
             return project;
         }
         catch (error) {
-            console.error('Error creating project:', error);
+            console.error("Error creating project:", error);
         }
         finally {
             await this.prisma.$disconnect();
         }
+    }
+    async findAll(page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const take = Number(limit);
+        const [projects, total] = await Promise.all([
+            this.prisma.project.findMany({
+                skip,
+                take,
+                include: { category: true, image: true },
+            }),
+            this.prisma.project.count(),
+        ]);
+        return {
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            projects: projects.map((project) => ({
+                ...project,
+                image: project.image.fileUrl,
+                category: project.category.name,
+            })),
+        };
+    }
+    async findByStatus(page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const take = Number(limit);
+        const [projects, total] = await Promise.all([
+            this.prisma.project.findMany({
+                skip,
+                take,
+                include: { category: true, image: true },
+                where: {
+                    status: "pending",
+                },
+            }),
+            this.prisma.project.count(),
+        ]);
+        return {
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            projects: projects.map((project) => ({
+                ...project,
+                image: project.image.fileUrl,
+                category: project.category.name,
+            })),
+        };
+    }
+    isValidUUID(uuid) {
+        const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+        return uuidRegex.test(uuid);
+    }
+    async findById(id) {
+        if (!this.isValidUUID(id)) {
+            throw new Error("Invalid UUID format");
+        }
+        const project = await this.prisma.project.findUnique({
+            include: { category: true, image: true },
+            where: {
+                id: id,
+            },
+        });
+        return {
+            ...project,
+            image: project.image.fileUrl,
+            category: project.category.name,
+        };
     }
 };
 exports.ProjectService = ProjectService;
