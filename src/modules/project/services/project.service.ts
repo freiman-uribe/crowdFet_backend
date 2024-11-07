@@ -11,6 +11,7 @@ import { ROLES } from 'src/constants/roles';
 import { CreateProjectDto } from '../dto/proyect.dto';
 import { S3Service } from 'src/modules/common/services/aws-s3.service';
 import { IMulterFile } from 'src/types/multer';
+import { title } from 'process';
 
 @Injectable()
 export class ProjectService {
@@ -26,19 +27,41 @@ export class ProjectService {
    * @throws {HttpException} Si el usuario ya existe.
    */
   
-async createProject(data: CreateProjectDto, fileImage: IMulterFile = null) {
+async createProject(data: CreateProjectDto, files: any[] = []) {
+  
   try {
+    const fileImage = files.find(item => (item.fieldname === 'file'));
+    
+    
+    // console.log(data, 'data', fileImage)
     const urlImageProject = await this.s3Servie.uploadFile(fileImage, 'projects-crowd-fet/')
-
+    const findFileHistory = files.find(item => (item.fieldname === 'history[file]'));
+    const historyFile = await this.s3Servie.uploadFile(findFileHistory, 'projects-crowd-fet/history/')
+    
     console.log(urlImageProject, 'urlImageProjecturlImageProject')
+    let elementsSaving = []
+    for (let index = 0; index < data.elements.length; index++) {
+      const item = data.elements[index];
+      const fileElement = files.find(file => file.fieldname === `elements[${index}][imageId]`)
+
+      const dataFile = fileElement ? await this.s3Servie.uploadFile(fileElement, 'projects-crowd-fet/elements/') : null
+      elementsSaving.push(
+        {
+          title: item.title,
+          imageId: fileElement ? dataFile.id : null,
+          rewardId: item.rewardId
+        }
+      )
+    }
+    console.log(data.history, 'elementsSavingelementsSaving')
     const project = await this.prisma.project.create({
       data: {
         title: data.title,
         subtitle: data.subtitle,
         video: data.videoUrl,
         fundingAmount: Number(data.montoMeta),
-        launchDate: new Date(data.dateLaunch), // Fecha opcional // Fecha opcional
-        campaignDuration: new Date(data.durationCampaign), // Convertir a Date data.durationCampaign,
+        launchDate: new Date(data.dateLaunch), 
+        campaignDuration: new Date(data.durationCampaign), 
         status: 'pending', // Valor por defecto 'pending'
         imageId: urlImageProject.id,
         categoryId: data.categoryId,
@@ -46,16 +69,18 @@ async createProject(data: CreateProjectDto, fileImage: IMulterFile = null) {
         deparmentId: data.deparment,
         municipalityId: data.municipality,
         
-        // Si deseas añadir recompensas, aprobaciones, etc.
-        // rewards: {
-        //   create: [
-        //     {
-        //       title: 'Early Bird Special',
-        //       description: 'Exclusive reward for early backers',
-        //       amount: 50.0,
-        //     },
-        //   ]
-        // }
+        elements: {
+          createMany: {
+            data: elementsSaving
+          }
+        },
+        history: {
+          create: {
+            risksChallenges: data.history.riesgos,
+            aiUsage: data.history.usoIA === 'noActivar' ? false : true,
+            projectHistoryId: historyFile.id,
+          }
+        }
       }
     });
 

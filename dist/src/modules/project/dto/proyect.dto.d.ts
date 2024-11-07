@@ -11,4 +11,6 @@ export declare class CreateProjectDto {
     dateLaunch: Date;
     deparment: string;
     municipality: string;
+    elements: any[];
+    history: any;
 }

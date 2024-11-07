@@ -4,7 +4,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateProjectDto } from '../dto/proyect.dto';
 import { ProjectService } from '../services/project.service';
 import { IMulterFile } from 'src/types/multer';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 interface FilesProject  {
   file: IMulterFile
 }
@@ -20,9 +20,7 @@ export class ProjectController {
     summary: 'Obtiene los programas academicos',
   })
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'file', maxCount: 1 } // Nombre del campo en el `FormData`
-    ])
+    AnyFilesInterceptor()
   )
   async createProject(
     @Body() data: CreateProjectDto,
@@ -31,9 +29,9 @@ export class ProjectController {
         fileIsRequired: true,
       })
   )
-    files: FilesProject,
+    files: any[],
   ) {
     console.log(files)
-    return this.projectService.createProject(data, files.file[0]);
+    return this.projectService.createProject(data, files);
   }
 }

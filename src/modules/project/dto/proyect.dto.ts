@@ -44,4 +44,8 @@ export class CreateProjectDto {
   deparment: string;
 
   municipality: string;
+
+  elements: any[]
+
+  history: any
 }

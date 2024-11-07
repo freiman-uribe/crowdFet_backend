@@ -1,13 +1,9 @@
 import { CreateProjectDto } from '../dto/proyect.dto';
 import { ProjectService } from '../services/project.service';
-import { IMulterFile } from 'src/types/multer';
-interface FilesProject {
-    file: IMulterFile;
-}
 export declare class ProjectController {
     private readonly projectService;
     constructor(projectService: ProjectService);
-    createProject(data: CreateProjectDto, files: FilesProject): Promise<{
+    createProject(data: CreateProjectDto, files: any[]): Promise<{
         id: string;
         title: string;
         subtitle: string;
@@ -23,4 +19,3 @@ export declare class ProjectController {
         subCategoryId: string;
     }>;
 }
-export {};

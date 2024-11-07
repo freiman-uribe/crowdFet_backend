@@ -24,7 +24,7 @@ let ProjectController = class ProjectController {
     }
     async createProject(data, files) {
         console.log(files);
-        return this.projectService.createProject(data, files.file[0]);
+        return this.projectService.createProject(data, files);
     }
 };
 exports.ProjectController = ProjectController;
@@ -33,15 +33,13 @@ __decorate([
     (0, swagger_1.ApiOperation)({
         summary: 'Obtiene los programas academicos',
     }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
-        { name: 'file', maxCount: 1 }
-    ])),
+    (0, common_1.UseInterceptors)((0, platform_express_1.AnyFilesInterceptor)()),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFiles)(new common_1.ParseFilePipe({
         fileIsRequired: true,
     }))),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [proyect_dto_1.CreateProjectDto, Object]),
+    __metadata("design:paramtypes", [proyect_dto_1.CreateProjectDto, Array]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "createProject", null);
 exports.ProjectController = ProjectController = __decorate([

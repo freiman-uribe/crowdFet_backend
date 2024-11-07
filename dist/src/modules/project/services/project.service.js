@@ -18,10 +18,25 @@ let ProjectService = class ProjectService {
         this.prisma = prisma;
         this.s3Servie = s3Servie;
     }
-    async createProject(data, fileImage = null) {
+    async createProject(data, files = []) {
         try {
+            const fileImage = files.find(item => (item.fieldname === 'file'));
             const urlImageProject = await this.s3Servie.uploadFile(fileImage, 'projects-crowd-fet/');
+            const findFileHistory = files.find(item => (item.fieldname === 'history[file]'));
+            const historyFile = await this.s3Servie.uploadFile(findFileHistory, 'projects-crowd-fet/history/');
             console.log(urlImageProject, 'urlImageProjecturlImageProject');
+            let elementsSaving = [];
+            for (let index = 0; index < data.elements.length; index++) {
+                const item = data.elements[index];
+                const fileElement = files.find(file => file.fieldname === `elements[${index}][imageId]`);
+                const dataFile = fileElement ? await this.s3Servie.uploadFile(fileElement, 'projects-crowd-fet/elements/') : null;
+                elementsSaving.push({
+                    title: item.title,
+                    imageId: fileElement ? dataFile.id : null,
+                    rewardId: item.rewardId
+                });
+            }
+            console.log(data.history, 'elementsSavingelementsSaving');
             const project = await this.prisma.project.create({
                 data: {
                     title: data.title,
@@ -36,6 +51,18 @@ let ProjectService = class ProjectService {
                     subCategoryId: data.subCategoryId,
                     deparmentId: data.deparment,
                     municipalityId: data.municipality,
+                    elements: {
+                        createMany: {
+                            data: elementsSaving
+                        }
+                    },
+                    history: {
+                        create: {
+                            risksChallenges: data.history.riesgos,
+                            aiUsage: data.history.usoIA === 'noActivar' ? false : true,
+                            projectHistoryId: historyFile.id,
+                        }
+                    }
                 }
             });
             console.log('Project created:', project);
