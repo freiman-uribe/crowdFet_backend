@@ -11,25 +11,18 @@ export class CreateProjectDto {
   @IsNotEmpty()
   subtitle: string;
 
-  @IsString()
-  @IsNotEmpty()
-  location: string;
-
   @IsOptional()
   @IsUrl()
-  video?: string;
+  videoUrl?: string;
 
-  @IsNumber()
-  @Min(0)
-  fundingAmount: number;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   launchDate?: Date;
-  
-  @IsDate()
-  campaignDuration: Date;
+
+  @IsString()
+  durationCampaign: Date;
 
   @IsString()
   @IsOptional()

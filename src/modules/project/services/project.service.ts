@@ -30,16 +30,17 @@ async createProject(data: CreateProjectDto, fileImage: IMulterFile = null) {
   try {
     const urlImageProject = await this.s3Servie.uploadFile(fileImage, 'projects-crowd-fet/')
 
+    console.log(urlImageProject, 'urlImageProjecturlImageProject')
     const project = await this.prisma.project.create({
       data: {
         title: data.title,
         subtitle: data.subtitle,
-        video: data.video,
-        fundingAmount: data.montoMeta,
-        launchDate: data.dateLaunch, // Fecha opcional
-        campaignDuration: data.campaignDuration,
+        video: data.videoUrl,
+        fundingAmount: Number(data.montoMeta),
+        launchDate: new Date(data.dateLaunch), // Fecha opcional // Fecha opcional
+        campaignDuration: new Date(data.durationCampaign), // Convertir a Date data.durationCampaign,
         status: 'pending', // Valor por defecto 'pending'
-        imageId: urlImageProject,
+        imageId: urlImageProject.id,
         categoryId: data.categoryId,
         subCategoryId: data.subCategoryId,
         deparmentId: data.deparment,
@@ -59,6 +60,7 @@ async createProject(data: CreateProjectDto, fileImage: IMulterFile = null) {
     });
 
     console.log('Project created:', project);
+    return project
   } catch (error) {
     console.error('Error creating project:', error);
   } finally {

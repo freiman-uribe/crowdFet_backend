@@ -29,20 +29,10 @@ __decorate([
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "subtitle", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateProjectDto.prototype, "location", void 0);
-__decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
-], CreateProjectDto.prototype, "video", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(0),
-    __metadata("design:type", Number)
-], CreateProjectDto.prototype, "fundingAmount", void 0);
+], CreateProjectDto.prototype, "videoUrl", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDate)(),
@@ -50,9 +40,9 @@ __decorate([
     __metadata("design:type", Date)
 ], CreateProjectDto.prototype, "launchDate", void 0);
 __decorate([
-    (0, class_validator_1.IsDate)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", Date)
-], CreateProjectDto.prototype, "campaignDuration", void 0);
+], CreateProjectDto.prototype, "durationCampaign", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

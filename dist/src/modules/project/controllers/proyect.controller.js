@@ -12,33 +12,41 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommonController = void 0;
+exports.ProjectController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const proyect_dto_1 = require("../dto/proyect.dto");
 const project_service_1 = require("../services/project.service");
-let CommonController = class CommonController {
+const platform_express_1 = require("@nestjs/platform-express");
+let ProjectController = class ProjectController {
     constructor(projectService) {
         this.projectService = projectService;
     }
-    async createProject(data) {
-        return this.projectService.createProject(data);
+    async createProject(data, files) {
+        console.log(files);
+        return this.projectService.createProject(data, files.file[0]);
     }
 };
-exports.CommonController = CommonController;
+exports.ProjectController = ProjectController;
 __decorate([
-    (0, common_1.Post)('project'),
+    (0, common_1.Post)('create-project'),
     (0, swagger_1.ApiOperation)({
         summary: 'Obtiene los programas academicos',
     }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'file', maxCount: 1 }
+    ])),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFiles)(new common_1.ParseFilePipe({
+        fileIsRequired: true,
+    }))),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [proyect_dto_1.CreateProjectDto]),
+    __metadata("design:paramtypes", [proyect_dto_1.CreateProjectDto, Object]),
     __metadata("design:returntype", Promise)
-], CommonController.prototype, "createProject", null);
-exports.CommonController = CommonController = __decorate([
+], ProjectController.prototype, "createProject", null);
+exports.ProjectController = ProjectController = __decorate([
     (0, common_1.Controller)('project'),
     (0, swagger_1.ApiTags)('Controlador de las opciones comunes'),
     __metadata("design:paramtypes", [project_service_1.ProjectService])
-], CommonController);
+], ProjectController);
 //# sourceMappingURL=proyect.controller.js.map

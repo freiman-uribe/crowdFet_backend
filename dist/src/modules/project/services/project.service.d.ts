@@ -6,5 +6,19 @@ export declare class ProjectService {
     private prisma;
     private s3Servie;
     constructor(prisma: PrismaService, s3Servie: S3Service);
-    createProject(data: CreateProjectDto, fileImage?: IMulterFile): Promise<void>;
+    createProject(data: CreateProjectDto, fileImage?: IMulterFile): Promise<{
+        id: string;
+        title: string;
+        subtitle: string;
+        video: string | null;
+        fundingAmount: number;
+        launchDate: Date | null;
+        campaignDuration: Date | null;
+        deparmentId: string;
+        municipalityId: string;
+        status: string;
+        imageId: string;
+        categoryId: string;
+        subCategoryId: string;
+    }>;
 }

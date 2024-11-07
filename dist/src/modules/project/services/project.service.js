@@ -21,16 +21,17 @@ let ProjectService = class ProjectService {
     async createProject(data, fileImage = null) {
         try {
             const urlImageProject = await this.s3Servie.uploadFile(fileImage, 'projects-crowd-fet/');
+            console.log(urlImageProject, 'urlImageProjecturlImageProject');
             const project = await this.prisma.project.create({
                 data: {
                     title: data.title,
                     subtitle: data.subtitle,
-                    video: data.video,
-                    fundingAmount: data.montoMeta,
-                    launchDate: data.dateLaunch,
-                    campaignDuration: data.campaignDuration,
+                    video: data.videoUrl,
+                    fundingAmount: Number(data.montoMeta),
+                    launchDate: new Date(data.dateLaunch),
+                    campaignDuration: new Date(data.durationCampaign),
                     status: 'pending',
-                    imageId: urlImageProject,
+                    imageId: urlImageProject.id,
                     categoryId: data.categoryId,
                     subCategoryId: data.subCategoryId,
                     deparmentId: data.deparment,
@@ -38,6 +39,7 @@ let ProjectService = class ProjectService {
                 }
             });
             console.log('Project created:', project);
+            return project;
         }
         catch (error) {
             console.error('Error creating project:', error);

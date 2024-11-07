@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config'; 
 import { IMulterFile } from 'src/types/multer';
+import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
 export class S3Service {
@@ -9,7 +10,7 @@ export class S3Service {
   private readonly bucketName: string;
   private readonly region: string = 'us-east-2';
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private prisma: PrismaService) {
     this.s3Client = new S3Client({
       region: this.region,
       credentials: {
@@ -20,7 +21,7 @@ export class S3Service {
     this.bucketName = 'bus-fet';
   }
 
-  async uploadFile(file: IMulterFile, folder: string): Promise<any> {
+  async uploadFile(file: IMulterFile, folder: string) {
     const fileKey = `${folder}${Date.now()}-${file.originalname}`
     const uploadParams = {
       Bucket: this.bucketName,
@@ -34,6 +35,14 @@ export class S3Service {
 
     const fileUrl = `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${fileKey}`;
     
-    return fileUrl
+    const createFileDto = {
+      fileName: file.originalname,
+      fileType: file.mimetype,
+      fileSize: file.size,
+      fileUrl,
+    };
+
+    const savedFile = await this.prisma.file.create({ data: createFileDto });
+    return savedFile;
   }
 }

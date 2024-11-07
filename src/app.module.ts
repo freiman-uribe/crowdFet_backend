@@ -5,8 +5,10 @@ import { PrismaService } from './modules/prisma/prisma.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { CommonModule } from './modules/common/common.module';
+import { ProjectModule } from './modules/project/project.module';
 @Module({
   imports: [
+    ProjectModule,
     AuthModule,
     UserModule,
     CommonModule,

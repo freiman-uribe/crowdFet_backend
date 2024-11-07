@@ -14,12 +14,14 @@ const prisma_service_1 = require("./modules/prisma/prisma.service");
 const auth_module_1 = require("./modules/auth/auth.module");
 const user_module_1 = require("./modules/user/user.module");
 const common_module_1 = require("./modules/common/common.module");
+const project_module_1 = require("./modules/project/project.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            project_module_1.ProjectModule,
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             common_module_1.CommonModule,

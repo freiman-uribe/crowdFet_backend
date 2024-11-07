@@ -1,11 +1,9 @@
 export declare class CreateProjectDto {
     title: string;
     subtitle: string;
-    location: string;
-    video?: string;
-    fundingAmount: number;
+    videoUrl?: string;
     launchDate?: Date;
-    campaignDuration: Date;
+    durationCampaign: Date;
     status?: string;
     categoryId: string;
     subCategoryId: string;
