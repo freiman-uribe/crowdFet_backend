@@ -27,18 +27,13 @@ export class CreateProjectDto {
   @IsDate()
   @Type(() => Date)
   launchDate?: Date;
-
-  @IsInt()
-  @Min(1)
-  campaignDuration: number;
+  
+  @IsDate()
+  campaignDuration: Date;
 
   @IsString()
   @IsOptional()
   status?: string = 'pending'; // Valor por defecto
-
-  @IsUUID()
-  @IsNotEmpty()
-  imageId: string;
 
   @IsUUID()
   @IsNotEmpty()
@@ -47,4 +42,13 @@ export class CreateProjectDto {
   @IsUUID()
   @IsNotEmpty()
   subCategoryId: string;
+
+
+  @IsNotEmpty()
+  montoMeta: number
+
+  dateLaunch: Date;
+  deparment: string;
+
+  municipality: string;
 }

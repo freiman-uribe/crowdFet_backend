@@ -90,6 +90,8 @@ model ListItem {
   categories        Project[] @relation(name: "CategoriesToProject")
   sub_categories    Project[] @relation(name: "SubCategoriesToProject")
 
+  deparments  Project[] @relation(name: "DeparmentToProject")
+  municipalities  Project[] @relation(name: "MunicipalityToProject")
   @@map("tbl_list_item")
 }
 
@@ -146,12 +148,18 @@ model Project {
   title             String   
   subtitle          String
 
-  location          String  
-
   video             String?  
-  fundingAmount     Float    
+  fundingAmount     Float
   launchDate        DateTime? 
-  campaignDuration  Int    
+
+  campaignDuration  DateTime? 
+  
+  deparment          ListItem @relation(name: "DeparmentToProject", fields: [deparmentId], references: [id])
+  deparmentId        String @db.Uuid 
+
+  municipality       ListItem @relation(name: "MunicipalityToProject", fields: [municipalityId], references: [id])
+  municipalityId     String   @db.Uuid 
+
   status            String  @default("pending") // 'pending', 'approved', 'rejected', etc.
   
   image             File   @relation(fields: [imageId], references: [id])
@@ -162,7 +170,6 @@ model Project {
 
   subCategory       ListItem @relation(name: "SubCategoriesToProject", fields: [subCategoryId], references: [id])
   subCategoryId     String   @db.Uuid 
-
 
   approvals         Approval[]   // Un proyecto puede tener múltiples aprobaciones (de diferentes usuarios)
 

@@ -9,11 +9,14 @@ import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { hashSync } from 'bcrypt';
 import { ROLES } from 'src/constants/roles';
 import { CreateProjectDto } from '../dto/proyect.dto';
+import { S3Service } from 'src/modules/common/services/aws-s3.service';
+import { IMulterFile } from 'src/types/multer';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    private prisma: PrismaService
+    private prisma: PrismaService,
+    private s3Servie: S3Service
   ) {}
 
   /**
@@ -23,21 +26,25 @@ export class ProjectService {
    * @throws {HttpException} Si el usuario ya existe.
    */
   
-async createProject(data: CreateProjectDto) {
+async createProject(data: CreateProjectDto, fileImage: IMulterFile = null) {
   try {
+    const urlImageProject = await this.s3Servie.uploadFile(fileImage, 'projects-crowd-fet/')
+
     const project = await this.prisma.project.create({
       data: {
         title: data.title,
         subtitle: data.subtitle,
-        location: data.location,
         video: data.video,
-        fundingAmount: data.fundingAmount,
-        launchDate: data.launchDate, // Fecha opcional
+        fundingAmount: data.montoMeta,
+        launchDate: data.dateLaunch, // Fecha opcional
         campaignDuration: data.campaignDuration,
         status: 'pending', // Valor por defecto 'pending'
-        imageId: data.imageId,
+        imageId: urlImageProject,
         categoryId: data.categoryId,
-        subCategoryId: data.subCategoryId
+        subCategoryId: data.subCategoryId,
+        deparmentId: data.deparment,
+        municipalityId: data.municipality,
+        
         // Si deseas añadir recompensas, aprobaciones, etc.
         // rewards: {
         //   create: [

@@ -5,9 +5,12 @@ export declare class CreateProjectDto {
     video?: string;
     fundingAmount: number;
     launchDate?: Date;
-    campaignDuration: number;
+    campaignDuration: Date;
     status?: string;
-    imageId: string;
     categoryId: string;
     subCategoryId: string;
+    montoMeta: number;
+    dateLaunch: Date;
+    deparment: string;
+    municipality: string;
 }

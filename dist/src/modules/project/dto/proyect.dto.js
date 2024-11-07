@@ -50,9 +50,8 @@ __decorate([
     __metadata("design:type", Date)
 ], CreateProjectDto.prototype, "launchDate", void 0);
 __decorate([
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1),
-    __metadata("design:type", Number)
+    (0, class_validator_1.IsDate)(),
+    __metadata("design:type", Date)
 ], CreateProjectDto.prototype, "campaignDuration", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
@@ -63,15 +62,14 @@ __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreateProjectDto.prototype, "imageId", void 0);
-__decorate([
-    (0, class_validator_1.IsUUID)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
 ], CreateProjectDto.prototype, "categoryId", void 0);
 __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "subCategoryId", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateProjectDto.prototype, "montoMeta", void 0);
 //# sourceMappingURL=proyect.dto.js.map
