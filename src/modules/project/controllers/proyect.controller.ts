@@ -1,5 +1,5 @@
 
-import { Body, Controller, ParseFilePipe, Get, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, ParseFilePipe, Get, Post, Query, UploadedFiles, UseInterceptors, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateProjectDto } from '../dto/proyect.dto';
 import { ProjectService } from '../services/project.service';
@@ -57,5 +57,11 @@ export class ProjectController {
     console.log("id", id);
     
     return this.projectService.findById(id);
+  }
+
+
+  @Get("get-project/:id")
+  async getProject(@Param("id") id:string) {
+    return this.projectService.getProjectDataForId(id);
   }
 }

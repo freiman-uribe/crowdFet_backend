@@ -180,7 +180,6 @@ model Project {
 
   comments           ProjectComments[]   @relation(name: "comments")
 
-  elements          Elements[]
 }
 
 model ProjectComments {
@@ -207,8 +206,8 @@ model Reward {
   project           Project   @relation(fields: [projectId], references: [id])
   projectId         String    @db.Uuid  
 
-  image             File   @relation(fields: [imageId], references: [id])
-  imageId           String  @db.Uuid 
+  image             File?   @relation(fields: [imageId], references: [id])
+  imageId           String?  @db.Uuid 
 
   elements          Elements[]
 }
@@ -222,9 +221,6 @@ model Elements {
 
   reward           Reward?   @relation(fields: [rewardId], references: [id])
   rewardId         String?   @db.Uuid
-
-  project           Project   @relation(fields: [projectId], references: [id])
-  projectId         String    @db.Uuid  
 }
 
 

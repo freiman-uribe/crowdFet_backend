@@ -13,7 +13,7 @@ export class CreateProjectDto {
 
   @IsOptional()
   @IsUrl()
-  videoUrl?: string;
+  video?: string;
 
 
   @IsOptional()
@@ -46,6 +46,8 @@ export class CreateProjectDto {
   municipality: string;
 
   elements: any[]
+
+  rewards: any[]
 
   history: any
 }

@@ -31,7 +31,6 @@ export class ProjectService {
   async createProject(data: CreateProjectDto, files: any[] = []) {
     try {
       const fileImage = files.find((item) => item.fieldname === "file");
-
       // console.log(data, 'data', fileImage)
       const urlImageProject = await this.s3Servie.uploadFile(
         fileImage,
@@ -45,7 +44,29 @@ export class ProjectService {
         "projects-crowd-fet/history/"
       );
 
-      console.log(urlImageProject, "urlImageProjecturlImageProject");
+      const project = await this.prisma.project.create({
+        data: {
+          title: data.title,
+          subtitle: data.subtitle,
+          video: data.video,
+          fundingAmount: Number(data.montoMeta),
+          launchDate: new Date(data.dateLaunch),
+          campaignDuration: new Date(data.durationCampaign),
+          status: "pending", // Valor por defecto 'pending'
+          imageId: urlImageProject.id,
+          categoryId: data.categoryId,
+          subCategoryId: data.subCategoryId,
+          deparmentId: data.deparment,
+          municipalityId: data.municipality,
+          history: {
+            create: {
+              risksChallenges: data.history.riesgos,
+              aiUsage: data.history.usoIA === "noActivar" ? false : true,
+              projectHistoryId: historyFile.id,
+            },
+          },
+        },
+      });
       let elementsSaving = [];
       for (let index = 0; index < data.elements.length; index++) {
         const item = data.elements[index];
@@ -62,41 +83,39 @@ export class ProjectService {
         elementsSaving.push({
           title: item.title,
           imageId: fileElement ? dataFile.id : null,
-          rewardId: item.rewardId,
+          itemId: item.id,
         });
       }
-      console.log(data.history, "elementsSavingelementsSaving");
-      const project = await this.prisma.project.create({
-        data: {
-          title: data.title,
-          subtitle: data.subtitle,
-          video: data.videoUrl,
-          fundingAmount: Number(data.montoMeta),
-          launchDate: new Date(data.dateLaunch),
-          campaignDuration: new Date(data.durationCampaign),
-          status: "pending", // Valor por defecto 'pending'
-          imageId: urlImageProject.id,
-          categoryId: data.categoryId,
-          subCategoryId: data.subCategoryId,
-          deparmentId: data.deparment,
-          municipalityId: data.municipality,
 
-          elements: {
-            createMany: {
-              data: elementsSaving,
-            },
-          },
-          history: {
-            create: {
-              risksChallenges: data.history.riesgos,
-              aiUsage: data.history.usoIA === "noActivar" ? false : true,
-              projectHistoryId: historyFile.id,
-            },
-          },
-        },
-      });
+      for (let index = 0; index < data.rewards.length; index++) {
+        const reward = data.rewards[index];
+        const elementsId = reward.selectedOptions.split(',')
 
-      console.log("Project created:", project);
+        const elementsForReward = elementsSaving.filter(element => elementsId.includes(element.itemId)).map(eleme => {
+          delete eleme.itemId;
+          return eleme
+        })
+
+        delete reward.selectedOptions
+        await this.prisma.reward.create({
+          data: {
+            ...reward,
+            pledgedAmount: Number(reward.pledgedAmount),
+            availability: Number(reward.availability),
+            limitTime: new Date(reward.limitTime),
+            estimatedDelivery: new Date(reward.estimatedDelivery),
+            shipping: Boolean(reward.shipping),
+            projectId: project.id,
+            imageId: null,
+            elements: {
+              createMany: {
+                data: elementsForReward
+              }
+            }
+          },
+        });
+      }
+
       return project;
     } catch (error) {
       console.error("Error creating project:", error);
@@ -179,5 +198,14 @@ export class ProjectService {
       image: project.image.fileUrl,
       category: project.category.name,
     };
+  }
+
+  async getProjectDataForId(id:string) {
+    return await this.prisma.project.findUnique({
+        include: { category: true, image: true, rewards: true, history: true  },
+        where: {
+          id: id,
+        },
+    });
   }
 }
