@@ -168,16 +168,27 @@ export class ProjectService {
       throw new Error("Invalid UUID format");
     }
     const project = await this.prisma.project.findUnique({
-      include: { category: true, image: true },
+      include: {
+        category: true,
+        image: true,
+        history: {
+          include: { projectHistory: true },
+        }
+      },
       where: {
         id: id,
       },
     });
       
+    const history = Array.isArray(project.history)
+      ? project.history[0]
+      : project.history;
+
     return {
       ...project,
       image: project.image.fileUrl,
       category: project.category.name,
+      file: history.projectHistory,
     };
   }
 }
