@@ -36,6 +36,9 @@ let ProjectController = class ProjectController {
         console.log("id", id);
         return this.projectService.findById(id);
     }
+    async getProject(id) {
+        return this.projectService.getProjectDataForId(id);
+    }
 };
 exports.ProjectController = ProjectController;
 __decorate([
@@ -84,6 +87,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "getProjectId", null);
+__decorate([
+    (0, common_1.Get)("get-project/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProject", null);
 exports.ProjectController = ProjectController = __decorate([
     (0, common_1.Controller)("project"),
     (0, swagger_1.ApiTags)("Controlador de las opciones comunes"),

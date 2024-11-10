@@ -1,7 +1,7 @@
 export declare class CreateProjectDto {
     title: string;
     subtitle: string;
-    videoUrl?: string;
+    video?: string;
     launchDate?: Date;
     durationCampaign: Date;
     status?: string;
@@ -12,5 +12,6 @@ export declare class CreateProjectDto {
     deparment: string;
     municipality: string;
     elements: any[];
+    rewards: any[];
     history: any;
 }
