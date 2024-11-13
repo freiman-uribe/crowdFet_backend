@@ -89,14 +89,16 @@ export class ProjectService {
 
       for (let index = 0; index < data.rewards.length; index++) {
         const reward = data.rewards[index];
-        const elementsId = reward.selectedOptions.split(',')
+        const elementsId = reward.selectedOptions.split(",");
 
-        const elementsForReward = elementsSaving.filter(element => elementsId.includes(element.itemId)).map(eleme => {
-          delete eleme.itemId;
-          return eleme
-        })
+        const elementsForReward = elementsSaving
+          .filter((element) => elementsId.includes(element.itemId))
+          .map((eleme) => {
+            delete eleme.itemId;
+            return eleme;
+          });
 
-        delete reward.selectedOptions
+        delete reward.selectedOptions;
         await this.prisma.reward.create({
           data: {
             ...reward,
@@ -109,9 +111,9 @@ export class ProjectService {
             imageId: null,
             elements: {
               createMany: {
-                data: elementsForReward
-              }
-            }
+                data: elementsForReward,
+              },
+            },
           },
         });
       }
@@ -178,11 +180,12 @@ export class ProjectService {
   }
 
   isValidUUID(uuid: string): boolean {
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    const uuidRegex =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     return uuidRegex.test(uuid);
   }
 
-  async findById(id: string,): Promise<any> {
+  async findById(id: string): Promise<any> {
     if (!this.isValidUUID(id)) {
       throw new Error("Invalid UUID format");
     }
@@ -192,13 +195,15 @@ export class ProjectService {
         image: true,
         history: {
           include: { projectHistory: true },
-        }
+        },
+        // elements: true,
+        rewards: true
       },
       where: {
         id: id,
       },
     });
-      
+
     const history = Array.isArray(project.history)
       ? project.history[0]
       : project.history;
@@ -211,12 +216,31 @@ export class ProjectService {
     };
   }
 
-  async getProjectDataForId(id:string) {
+  async getProjectDataForId(id: string) {
     return await this.prisma.project.findUnique({
-        include: { category: true, image: true, rewards: true, history: true  },
-        where: {
-          id: id,
-        },
+      include: { category: true, image: true, rewards: true, history: true },
+      where: {
+        id: id,
+      },
     });
+  }
+
+  async updateStatus(id: string): Promise<any> {
+    try {
+      if (!this.isValidUUID(id)) {
+        throw new Error("Invalid UUID format");
+      }
+
+      await this.prisma.project.update({
+        where: { id },
+        data: { status: "approved" },
+      });
+
+      return {
+        data: "Proyecto aprobado",
+      };
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
