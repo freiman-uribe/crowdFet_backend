@@ -138,6 +138,7 @@ model User {
   rh_id        String?   @db.Uuid
 
   approvals   Approval[] // Un usuario puede aprobar múltiples proyectos
+  transactions Transactions[]
 
   program_academic    AcademicProgram? @relation(name: "UserToProgramAcademic", fields: [program_academic_id], references: [id])
   program_academic_id String?          @db.Uuid
@@ -177,9 +178,8 @@ model Project {
 
   rewards           Reward[]  
   history           History[] 
-
+  transactions      Transactions[]
   comments           ProjectComments[]   @relation(name: "comments")
-
 }
 
 model ProjectComments {
@@ -252,4 +252,32 @@ model Approval {
 
   // Estado de la aprobación (aprobado o rechazado)
   status      String     // 'approved', 'rejected'
+}
+
+model Transactions {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // audit_fields
+  created_by  String?
+  created_at  DateTime @default(now())
+  modified_by String?
+  updated_at  DateTime @updatedAt
+  status      Boolean  @default(true)
+
+  reference         String  @unique
+  referenceProvider String?          @unique
+  mount             Float
+  quantity          Int
+  statusTransaction String
+
+  equal_day      Int
+  amount_per_day Int
+
+  user    User?  @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+
+  project    Project ? @relation(fields: [projectId], references: [id])
+  projectId String @db.Uuid
+
+
+  @@map("tbl_transacions")
 }

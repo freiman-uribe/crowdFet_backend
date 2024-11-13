@@ -39,6 +39,9 @@ let ProjectController = class ProjectController {
     async getProject(id) {
         return this.projectService.getProjectDataForId(id);
     }
+    async activeProject(id) {
+        return this.projectService.updateStatus(id);
+    }
 };
 exports.ProjectController = ProjectController;
 __decorate([
@@ -94,6 +97,16 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "getProject", null);
+__decorate([
+    (0, common_1.Get)("active"),
+    (0, swagger_1.ApiOperation)({
+        summary: "Proyecto por id",
+    }),
+    __param(0, (0, common_1.Query)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "activeProject", null);
 exports.ProjectController = ProjectController = __decorate([
     (0, common_1.Controller)("project"),
     (0, swagger_1.ApiTags)("Controlador de las opciones comunes"),

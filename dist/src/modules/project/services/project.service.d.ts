@@ -25,6 +25,26 @@ export declare class ProjectService {
     isValidUUID(uuid: string): boolean;
     findById(id: string): Promise<any>;
     getProjectDataForId(id: string): Promise<{
+        history: {
+            id: string;
+            risksChallenges: string;
+            aiUsage: boolean;
+            projectHistoryId: string;
+            projectId: string;
+        }[];
+        rewards: {
+            id: string;
+            title: string;
+            description: string;
+            pledgedAmount: number;
+            availability: number;
+            limitTime: Date | null;
+            content: string;
+            estimatedDelivery: Date;
+            shipping: boolean;
+            projectId: string;
+            imageId: string | null;
+        }[];
         image: {
             id: string;
             fileName: string;
@@ -48,26 +68,6 @@ export declare class ProjectService {
             order: number | null;
             parentId: string | null;
         };
-        rewards: {
-            id: string;
-            title: string;
-            description: string;
-            pledgedAmount: number;
-            availability: number;
-            limitTime: Date | null;
-            content: string;
-            estimatedDelivery: Date;
-            shipping: boolean;
-            projectId: string;
-            imageId: string | null;
-        }[];
-        history: {
-            id: string;
-            risksChallenges: string;
-            aiUsage: boolean;
-            projectHistoryId: string;
-            projectId: string;
-        }[];
     } & {
         id: string;
         title: string;
@@ -83,4 +83,5 @@ export declare class ProjectService {
         categoryId: string;
         subCategoryId: string;
     }>;
+    updateStatus(id: string): Promise<any>;
 }

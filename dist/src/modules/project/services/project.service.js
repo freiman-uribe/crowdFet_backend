@@ -62,8 +62,10 @@ let ProjectService = class ProjectService {
             }
             for (let index = 0; index < data.rewards.length; index++) {
                 const reward = data.rewards[index];
-                const elementsId = reward.selectedOptions.split(',');
-                const elementsForReward = elementsSaving.filter(element => elementsId.includes(element.itemId)).map(eleme => {
+                const elementsId = reward.selectedOptions.split(",");
+                const elementsForReward = elementsSaving
+                    .filter((element) => elementsId.includes(element.itemId))
+                    .map((eleme) => {
                     delete eleme.itemId;
                     return eleme;
                 });
@@ -80,9 +82,9 @@ let ProjectService = class ProjectService {
                         imageId: null,
                         elements: {
                             createMany: {
-                                data: elementsForReward
-                            }
-                        }
+                                data: elementsForReward,
+                            },
+                        },
                     },
                 });
             }
@@ -151,15 +153,26 @@ let ProjectService = class ProjectService {
             throw new Error("Invalid UUID format");
         }
         const project = await this.prisma.project.findUnique({
-            include: { category: true, image: true },
+            include: {
+                category: true,
+                image: true,
+                history: {
+                    include: { projectHistory: true },
+                },
+                rewards: true
+            },
             where: {
                 id: id,
             },
         });
+        const history = Array.isArray(project.history)
+            ? project.history[0]
+            : project.history;
         return {
             ...project,
             image: project.image.fileUrl,
             category: project.category.name,
+            file: history.projectHistory,
         };
     }
     async getProjectDataForId(id) {
@@ -169,6 +182,23 @@ let ProjectService = class ProjectService {
                 id: id,
             },
         });
+    }
+    async updateStatus(id) {
+        try {
+            if (!this.isValidUUID(id)) {
+                throw new Error("Invalid UUID format");
+            }
+            await this.prisma.project.update({
+                where: { id },
+                data: { status: "approved" },
+            });
+            return {
+                data: "Proyecto aprobado",
+            };
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 };
 exports.ProjectService = ProjectService;
