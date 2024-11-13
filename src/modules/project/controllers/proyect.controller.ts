@@ -53,15 +53,22 @@ export class ProjectController {
   @ApiOperation({
     summary: "Proyecto por id",
   })
-  async getProjectId(@Query("id") id ) {
+  async getProjectId(@Query("id") id) {
     console.log("id", id);
-    
+
     return this.projectService.findById(id);
   }
 
-
   @Get("get-project/:id")
-  async getProject(@Param("id") id:string) {
+  async getProject(@Param("id") id: string) {
     return this.projectService.getProjectDataForId(id);
+  }
+
+  @Get("active")
+  @ApiOperation({
+    summary: "Proyecto por id",
+  })
+  async activeProject(@Query("id") id) {
+    return this.projectService.updateStatus(id);
   }
 }
