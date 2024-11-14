@@ -54,8 +54,6 @@ export class ProjectController {
     summary: "Proyecto por id",
   })
   async getProjectId(@Query("id") id) {
-    console.log("id", id);
-
     return this.projectService.findById(id);
   }
 

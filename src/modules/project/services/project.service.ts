@@ -191,34 +191,38 @@ export class ProjectService {
   }
 
   async findById(id: string): Promise<any> {
-    if (!this.isValidUUID(id)) {
-      throw new Error("Invalid UUID format");
-    }
-    const project = await this.prisma.project.findUnique({
-      include: {
-        category: true,
-        image: true,
-        history: {
-          include: { projectHistory: true },
+    try {
+      if (!this.isValidUUID(id)) {
+        throw new Error("Invalid UUID format");
+      }
+      const project = await this.prisma.project.findUnique({
+        include: {
+          category: true,
+          image: true,
+          history: {
+            include: { projectHistory: true },
+          },
+          // elements: true,
+          rewards: true,
         },
-        // elements: true,
-        rewards: true,
-      },
-      where: {
-        id: id,
-      },
-    });
+        where: {
+          id: id,
+        },
+      });
 
-    const history = Array.isArray(project.history)
-      ? project.history[0]
-      : project.history;
+      const history = Array.isArray(project.history)
+        ? project.history[0]
+        : project.history;
 
-    return {
-      ...project,
-      image: project.image.fileUrl,
-      category: project.category.name,
-      file: history.projectHistory,
-    };
+      return {
+        ...project,
+        image: project.image.fileUrl,
+        category: project.category.name,
+        file: history.projectHistory,
+      };
+    } catch (error) {
+      console.error('erro>>', error); 
+    }
   }
 
   async getProjectDataForId(id: string) {
