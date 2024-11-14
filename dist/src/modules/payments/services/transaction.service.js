@@ -92,7 +92,6 @@ let TransactionService = class TransactionService {
         return this.signature;
     }
     async createTransaction(reference, project, mount) {
-        console.log(reference, 'reference');
         const result = await this.prisma.transactions.create({
             data: {
                 updated_at: new Date(),

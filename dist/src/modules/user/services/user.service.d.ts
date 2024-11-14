@@ -5,7 +5,7 @@ export declare class UserService {
     private prisma;
     constructor(prisma: PrismaService);
     createUser(userData: AuthCreateUserDto): Promise<User>;
-    createOrUpdateUser(userData: AuthCreateUserDto): Promise<User>;
+    createOrUpdateUser(userData: any): Promise<User>;
     getByEmail(email: string): import(".prisma/client").Prisma.Prisma__UserClient<{
         rol: {
             code: string;
@@ -21,7 +21,7 @@ export declare class UserService {
         last_name: string | null;
         email: string;
         password: string;
-        code_student: string;
+        code_student: string | null;
         document: string | null;
         rol_id: string;
         phone: string | null;

@@ -18,7 +18,7 @@ export declare class AuthController {
         last_name: string | null;
         email: string;
         password: string;
-        code_student: string;
+        code_student: string | null;
         document: string | null;
         rol_id: string;
         phone: string | null;

@@ -108,7 +108,6 @@ export class TransactionService {
   }
  
   async createTransaction(reference: string, project: Project, mount: number): Promise<Transaction> {
-    console.log(reference, 'reference')
     const result = await this.prisma.transactions.create({
       data: {
         updated_at: new Date(),

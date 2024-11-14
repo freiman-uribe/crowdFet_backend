@@ -53,7 +53,7 @@ export class UserService {
     }
   }
 
-  async createOrUpdateUser(userData: AuthCreateUserDto): Promise<User> {
+  async createOrUpdateUser(userData: any): Promise<User> {
     const findUserByEmail = await this.getByEmail(userData.email);
   
     const roleInversor = await this.getRolByCode(ROLES.INVERSOR);
@@ -79,13 +79,10 @@ export class UserService {
         // Si el usuario no existe, crea uno nuevo
         const userCreate = await this.prisma.user.create({
           data: {
-            document: userData.document,
-            code_student: userData.code_student,
             email: userData.email,
             password: passwordEncipted,
             full_name: userData.full_name,
             last_name: userData.last_name,
-            program_academic_id: userData.code_program,
             rol_id: roleInversor.id,
             updated_at: new Date(),
           },

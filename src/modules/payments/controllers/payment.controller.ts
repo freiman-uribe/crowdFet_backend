@@ -59,7 +59,13 @@ export class PaymentController {
     @Body() body: any,
     @Param('projectId') projectId: string
   ) {
-    console.log(body,'ssss', projectId)
+    const user = await this.userService.createOrUpdateUser({
+      full_name: body.name,
+      email: body.email,
+      last_name: body.last_name,
+      password: 'Hol!mundo',
+    })
+    this.transactionService.userId = user.id
     const planData = await this.projectService.getProjectForId(projectId)
     const totalPayment = Number(body.amount) * 100 
     const newTransaction = await this.transactionService.initReference(planData, totalPayment)
