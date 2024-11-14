@@ -5,6 +5,7 @@ export declare class UserService {
     private prisma;
     constructor(prisma: PrismaService);
     createUser(userData: AuthCreateUserDto): Promise<User>;
+    createOrUpdateUser(userData: AuthCreateUserDto): Promise<User>;
     getByEmail(email: string): import(".prisma/client").Prisma.Prisma__UserClient<{
         rol: {
             code: string;

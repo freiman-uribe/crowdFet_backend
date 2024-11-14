@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ROLES = void 0;
 exports.ROLES = {
     ADMIN: 'ADMIN',
-    STUDENT: 'STUDENT'
+    STUDENT: 'STUDENT',
+    INVERSOR: 'INVERSOR'
 };
 //# sourceMappingURL=roles.js.map

@@ -52,6 +52,52 @@ export class UserService {
       throw new HttpException(err, 400)
     }
   }
+
+  async createOrUpdateUser(userData: AuthCreateUserDto): Promise<User> {
+    const findUserByEmail = await this.getByEmail(userData.email);
+  
+    const roleInversor = await this.getRolByCode(ROLES.INVERSOR);
+    const passwordEncipted = hashSync(userData.password, 10);
+  
+    try {
+      if (findUserByEmail) {
+        // Actualiza el usuario existente si se encuentra por correo
+        const userUpdate = await this.prisma.user.update({
+          where: { email: userData.email },
+          data: {
+            email: userData.email,
+            password: passwordEncipted,
+            full_name: userData.full_name,
+            last_name: userData.last_name,
+            rol_id: roleInversor.id,
+            updated_at: new Date(),
+          },
+        });
+        delete userUpdate.password;
+        return userUpdate;
+      } else {
+        // Si el usuario no existe, crea uno nuevo
+        const userCreate = await this.prisma.user.create({
+          data: {
+            document: userData.document,
+            code_student: userData.code_student,
+            email: userData.email,
+            password: passwordEncipted,
+            full_name: userData.full_name,
+            last_name: userData.last_name,
+            program_academic_id: userData.code_program,
+            rol_id: roleInversor.id,
+            updated_at: new Date(),
+          },
+        });
+        delete userCreate.password;
+        return userCreate;
+      }
+    } catch (err) {
+      throw new HttpException(err, 400);
+    }
+  }
+
   /**
    * Busca un usuario por su correo electronico
    * @param email Correo electronico del usuario

@@ -217,12 +217,24 @@ export class ProjectService {
   }
 
   async getProjectDataForId(id: string) {
+    console.log('entre')
     return await this.prisma.project.findUnique({
       include: { category: true, image: true, rewards: true, history: true },
       where: {
         id: id,
       },
+    }).catch((error) => {
+      console.log(error)
     });
+  }
+
+  async getProjectForId(id: string) {
+    console.log('entre')
+    return await this.prisma.project.findUnique({
+      where: {
+        id,
+      },
+    })
   }
 
   async updateStatus(id: string): Promise<any> {

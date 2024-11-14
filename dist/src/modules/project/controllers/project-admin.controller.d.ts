@@ -17,5 +17,6 @@ export declare class ProjectAdminController {
         imageId: string;
         categoryId: string;
         subCategoryId: string;
+        userId: string | null;
     }>;
 }

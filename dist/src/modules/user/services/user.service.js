@@ -48,6 +48,48 @@ let UserService = class UserService {
             throw new common_1.HttpException(err, 400);
         }
     }
+    async createOrUpdateUser(userData) {
+        const findUserByEmail = await this.getByEmail(userData.email);
+        const roleInversor = await this.getRolByCode(roles_1.ROLES.INVERSOR);
+        const passwordEncipted = (0, bcrypt_1.hashSync)(userData.password, 10);
+        try {
+            if (findUserByEmail) {
+                const userUpdate = await this.prisma.user.update({
+                    where: { email: userData.email },
+                    data: {
+                        email: userData.email,
+                        password: passwordEncipted,
+                        full_name: userData.full_name,
+                        last_name: userData.last_name,
+                        rol_id: roleInversor.id,
+                        updated_at: new Date(),
+                    },
+                });
+                delete userUpdate.password;
+                return userUpdate;
+            }
+            else {
+                const userCreate = await this.prisma.user.create({
+                    data: {
+                        document: userData.document,
+                        code_student: userData.code_student,
+                        email: userData.email,
+                        password: passwordEncipted,
+                        full_name: userData.full_name,
+                        last_name: userData.last_name,
+                        program_academic_id: userData.code_program,
+                        rol_id: roleInversor.id,
+                        updated_at: new Date(),
+                    },
+                });
+                delete userCreate.password;
+                return userCreate;
+            }
+        }
+        catch (err) {
+            throw new common_1.HttpException(err, 400);
+        }
+    }
     getByEmail(email) {
         return this.prisma.user.findUnique({
             where: {

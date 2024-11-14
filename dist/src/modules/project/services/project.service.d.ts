@@ -19,32 +19,13 @@ export declare class ProjectService {
         imageId: string;
         categoryId: string;
         subCategoryId: string;
+        userId: string | null;
     }>;
     findAll(page?: number, limit?: number): Promise<any>;
     findByStatus(page?: number, limit?: number): Promise<any>;
     isValidUUID(uuid: string): boolean;
     findById(id: string): Promise<any>;
-    getProjectDataForId(id: string): Promise<{
-        history: {
-            id: string;
-            risksChallenges: string;
-            aiUsage: boolean;
-            projectHistoryId: string;
-            projectId: string;
-        }[];
-        rewards: {
-            id: string;
-            title: string;
-            description: string;
-            pledgedAmount: number;
-            availability: number;
-            limitTime: Date | null;
-            content: string;
-            estimatedDelivery: Date;
-            shipping: boolean;
-            projectId: string;
-            imageId: string | null;
-        }[];
+    getProjectDataForId(id: string): Promise<void | ({
         image: {
             id: string;
             fileName: string;
@@ -68,6 +49,26 @@ export declare class ProjectService {
             order: number | null;
             parentId: string | null;
         };
+        rewards: {
+            id: string;
+            title: string;
+            description: string;
+            pledgedAmount: number;
+            availability: number;
+            limitTime: Date | null;
+            content: string;
+            estimatedDelivery: Date;
+            shipping: boolean;
+            projectId: string;
+            imageId: string | null;
+        }[];
+        history: {
+            id: string;
+            risksChallenges: string;
+            aiUsage: boolean;
+            projectHistoryId: string;
+            projectId: string;
+        }[];
     } & {
         id: string;
         title: string;
@@ -82,6 +83,23 @@ export declare class ProjectService {
         imageId: string;
         categoryId: string;
         subCategoryId: string;
+        userId: string | null;
+    })>;
+    getProjectForId(id: string): Promise<{
+        id: string;
+        title: string;
+        subtitle: string;
+        video: string | null;
+        fundingAmount: number;
+        launchDate: Date | null;
+        campaignDuration: Date | null;
+        deparmentId: string;
+        municipalityId: string;
+        status: string;
+        imageId: string;
+        categoryId: string;
+        subCategoryId: string;
+        userId: string | null;
     }>;
     updateStatus(id: string): Promise<any>;
 }

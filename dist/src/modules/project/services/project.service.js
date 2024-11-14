@@ -176,10 +176,21 @@ let ProjectService = class ProjectService {
         };
     }
     async getProjectDataForId(id) {
+        console.log('entre');
         return await this.prisma.project.findUnique({
             include: { category: true, image: true, rewards: true, history: true },
             where: {
                 id: id,
+            },
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+    async getProjectForId(id) {
+        console.log('entre');
+        return await this.prisma.project.findUnique({
+            where: {
+                id,
             },
         });
     }

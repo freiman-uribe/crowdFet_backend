@@ -6,8 +6,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { CommonModule } from './modules/common/common.module';
 import { ProjectModule } from './modules/project/project.module';
+import { PaymentsModule } from './modules/payments/payment.module';
+import { ConfigService } from '@nestjs/config';
 @Module({
   imports: [
+    PaymentsModule,
     ProjectModule,
     AuthModule,
     UserModule,
