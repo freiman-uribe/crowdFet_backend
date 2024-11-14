@@ -160,11 +160,16 @@ export class ProjectService {
         take,
         include: { category: true, image: true },
         where: {
-          // status: "approved",
-          status: "pending",
+          status: "approved",
+          // status: "pending",
         },
       }),
-      this.prisma.project.count(), // Total de proyectos
+      this.prisma.project.count({
+        where: {
+          status: "approved",
+          // status: "pending",
+        }
+      }), // Total de proyectos
     ]);
 
     return {
@@ -197,7 +202,7 @@ export class ProjectService {
           include: { projectHistory: true },
         },
         // elements: true,
-        rewards: true
+        rewards: true,
       },
       where: {
         id: id,
