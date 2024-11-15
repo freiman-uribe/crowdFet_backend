@@ -108,15 +108,39 @@ let ProjectService = class ProjectService {
             }),
             this.prisma.project.count(),
         ]);
+        const transactionStats = await this.prisma.transactions.groupBy({
+            by: ["projectId"],
+            where: {
+                statusTransaction: "APPROVED",
+            },
+            _count: {
+                id: true,
+            },
+            _sum: {
+                mount: true,
+            },
+        });
+        const statsMap = new Map(transactionStats.map((stat) => [stat.projectId, stat]));
+        const projectsWithStats = projects.map((project) => {
+            const stats = statsMap.get(project.id) || {
+                _count: { id: 0 },
+                _sum: { mount: 0 },
+            };
+            return {
+                ...project,
+                image: project.image.fileUrl,
+                category: project.category.name,
+                transaction: {
+                    count: stats._count.id,
+                    totalSum: stats._sum.mount || 0,
+                },
+            };
+        });
         return {
             total,
             totalPages: Math.ceil(total / limit),
             currentPage: page,
-            projects: projects.map((project) => ({
-                ...project,
-                image: project.image.fileUrl,
-                category: project.category.name,
-            })),
+            projects: projectsWithStats,
         };
     }
     async findByStatus(page = 1, limit = 10) {
@@ -128,20 +152,48 @@ let ProjectService = class ProjectService {
                 take,
                 include: { category: true, image: true },
                 where: {
-                    status: "pending",
+                    status: "approved",
                 },
             }),
-            this.prisma.project.count(),
+            this.prisma.project.count({
+                where: {
+                    status: "approved",
+                },
+            }),
         ]);
+        const transactionStats = await this.prisma.transactions.groupBy({
+            by: ["projectId"],
+            where: {
+                statusTransaction: "APPROVED",
+            },
+            _count: {
+                id: true,
+            },
+            _sum: {
+                mount: true,
+            },
+        });
+        const statsMap = new Map(transactionStats.map((stat) => [stat.projectId, stat]));
+        const projectsWithStats = projects.map((project) => {
+            const stats = statsMap.get(project.id) || {
+                _count: { id: 0 },
+                _sum: { mount: 0 },
+            };
+            return {
+                ...project,
+                image: project.image.fileUrl,
+                category: project.category.name,
+                transaction: {
+                    count: stats._count.id,
+                    totalSum: stats._sum.mount || 0,
+                },
+            };
+        });
         return {
             total,
             totalPages: Math.ceil(total / limit),
             currentPage: page,
-            projects: projects.map((project) => ({
-                ...project,
-                image: project.image.fileUrl,
-                category: project.category.name,
-            })),
+            projects: projectsWithStats,
         };
     }
     isValidUUID(uuid) {
@@ -149,45 +201,84 @@ let ProjectService = class ProjectService {
         return uuidRegex.test(uuid);
     }
     async findById(id) {
-        if (!this.isValidUUID(id)) {
-            throw new Error("Invalid UUID format");
-        }
-        const project = await this.prisma.project.findUnique({
-            include: {
-                category: true,
-                image: true,
-                history: {
-                    include: { projectHistory: true },
+        try {
+            if (!this.isValidUUID(id)) {
+                throw new Error("Invalid UUID format");
+            }
+            const project = await this.prisma.project.findUnique({
+                include: {
+                    category: true,
+                    image: true,
+                    history: {
+                        include: { projectHistory: true },
+                    },
+                    rewards: {
+                        include: {
+                            elements: { include: { image: true } }
+                        }
+                    },
                 },
-                rewards: true
-            },
-            where: {
-                id: id,
-            },
-        });
-        const history = Array.isArray(project.history)
-            ? project.history[0]
-            : project.history;
-        return {
-            ...project,
-            image: project.image.fileUrl,
-            category: project.category.name,
-            file: history.projectHistory,
-        };
+                where: {
+                    id: id,
+                },
+            });
+            const transaction = await this.prisma.transactions.aggregate({
+                where: {
+                    projectId: id,
+                    statusTransaction: "APPROVED",
+                },
+                _count: {
+                    id: true,
+                },
+                _sum: {
+                    mount: true,
+                },
+            });
+            const history = Array.isArray(project.history)
+                ? project.history[0]
+                : project.history;
+            return {
+                ...project,
+                transaction: {
+                    count: transaction._count.id,
+                    totalSum: transaction._sum.mount || 0,
+                },
+                image: project.image.fileUrl,
+                category: project.category.name,
+                file: history.projectHistory,
+            };
+        }
+        catch (error) {
+            console.error("erro>>", error);
+        }
     }
     async getProjectDataForId(id) {
-        console.log('entre');
-        return await this.prisma.project.findUnique({
-            include: { category: true, image: true, rewards: true, history: true },
+        console.log("entre");
+        return await this.prisma.project
+            .findUnique({
+            include: { category: true, image: true, rewards: {
+                    include: {
+                        elements: {
+                            include: {
+                                image: true
+                            }
+                        }
+                    }
+                }, history: {
+                    include: {
+                        projectHistory: true
+                    }
+                } },
             where: {
                 id: id,
             },
-        }).catch((error) => {
+        })
+            .catch((error) => {
             console.log(error);
         });
     }
     async getProjectForId(id) {
-        console.log('entre');
+        console.log("entre");
         return await this.prisma.project.findUnique({
             where: {
                 id,

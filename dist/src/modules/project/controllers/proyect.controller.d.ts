@@ -23,26 +23,6 @@ export declare class ProjectController {
     getListProjects(page?: number, limit?: number): Promise<any>;
     getProjectId(id: any): Promise<any>;
     getProject(id: string): Promise<void | ({
-        history: {
-            id: string;
-            risksChallenges: string;
-            aiUsage: boolean;
-            projectHistoryId: string;
-            projectId: string;
-        }[];
-        rewards: {
-            id: string;
-            title: string;
-            description: string;
-            pledgedAmount: number;
-            availability: number;
-            limitTime: Date | null;
-            content: string;
-            estimatedDelivery: Date;
-            shipping: boolean;
-            projectId: string;
-            imageId: string | null;
-        }[];
         image: {
             id: string;
             fileName: string;
@@ -66,6 +46,51 @@ export declare class ProjectController {
             order: number | null;
             parentId: string | null;
         };
+        rewards: ({
+            elements: ({
+                image: {
+                    id: string;
+                    fileName: string;
+                    fileType: string;
+                    fileSize: number;
+                    fileUrl: string;
+                    uploadedAt: Date;
+                };
+            } & {
+                id: string;
+                title: string;
+                imageId: string | null;
+                rewardId: string | null;
+            })[];
+        } & {
+            id: string;
+            title: string;
+            description: string;
+            pledgedAmount: number;
+            availability: number;
+            limitTime: Date | null;
+            content: string;
+            estimatedDelivery: Date;
+            shipping: boolean;
+            projectId: string;
+            imageId: string | null;
+        })[];
+        history: ({
+            projectHistory: {
+                id: string;
+                fileName: string;
+                fileType: string;
+                fileSize: number;
+                fileUrl: string;
+                uploadedAt: Date;
+            };
+        } & {
+            id: string;
+            risksChallenges: string;
+            aiUsage: boolean;
+            projectHistoryId: string;
+            projectId: string;
+        })[];
     } & {
         id: string;
         title: string;

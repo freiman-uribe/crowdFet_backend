@@ -360,7 +360,19 @@ export class ProjectService {
     console.log("entre");
     return await this.prisma.project
       .findUnique({
-        include: { category: true, image: true, rewards: true, history: true },
+        include: { category: true, image: true, rewards: {
+          include: {
+            elements: {
+              include: {
+                image: true
+              }
+            }
+          }
+        }, history: {
+          include: {
+            projectHistory: true
+          }
+        } },
         where: {
           id: id,
         },

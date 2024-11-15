@@ -33,7 +33,6 @@ let ProjectController = class ProjectController {
         return this.projectService.findByStatus(page, limit);
     }
     async getProjectId(id) {
-        console.log("id", id);
         return this.projectService.findById(id);
     }
     async getProject(id) {
