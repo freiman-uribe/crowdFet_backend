@@ -64,8 +64,15 @@ export class ProjectController {
     summary: "Lista todos los proyectos",
   })
   async getListProjectsInversor(@Query("id") id, @Query("page") page = 1, @Query("limit") limit = 10) {
-    console.log('🚀 ~ ProjectController ~ getListProjectsUser ~ id:', id)
     return this.projectService.findByiInversor(id, page, limit);
+  }
+
+   @Get("listInversores")
+  @ApiOperation({
+    summary: "Lista todos los proyectos",
+  })
+  async getListProjectsInversores(@Query("id") id, @Query("page") page = 1, @Query("limit") limit = 10) {
+    return this.projectService.findInversores(id, page, limit);
   }
 
   @Get("project")
