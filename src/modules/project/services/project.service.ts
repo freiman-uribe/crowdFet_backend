@@ -174,7 +174,6 @@ export class ProjectService {
       };
     });
 
-
     return {
       total,
       totalPages: Math.ceil(total / limit),
@@ -315,8 +314,8 @@ export class ProjectService {
           rewards: {
             include: {
               // elements: true
-            elements: {include: {image:true}}
-            }
+              elements: { include: { image: true } },
+            },
           },
         },
         where: {
@@ -355,6 +354,83 @@ export class ProjectService {
       console.error("erro>>", error);
     }
   }
+
+  async findByUser(id: string, page: number = 1, limit: number = 10): Promise<any> {
+    //  async findAll(page: number = 1, limit: number = 10): Promise<any> {
+    const skip = (page - 1) * limit;
+    const take = Number(limit);
+
+    const [projects, total] = await Promise.all([
+      this.prisma.project.findMany({
+        skip,
+        take,
+        include: { category: true, image: true },
+        where: {
+          userId: id,
+        },
+      }),
+      this.prisma.project.count({
+        where: {
+          userId: id,
+        },
+      }), // Total de proyectos
+    ]);
+
+    // Obtener conteo y suma de transacciones para cada proyecto
+    const transactionStats = await this.prisma.transactions.groupBy({
+      by: ["projectId"],
+      where: {
+        statusTransaction: "APPROVED",
+      },
+      _count: {
+        id: true,
+      },
+      _sum: {
+        mount: true,
+      },
+    });
+
+    // Crear un mapa para acceder rápidamente a las estadísticas por projectId
+    const statsMap = new Map(
+      transactionStats.map((stat) => [stat.projectId, stat])
+    );
+
+    // Mapear los proyectos con los datos adicionales
+    const projectsWithStats = projects.map((project) => {
+      const stats = statsMap.get(project.id) || {
+        _count: { id: 0 },
+        _sum: { mount: 0 },
+      };
+      return {
+        ...project,
+        image: project.image.fileUrl,
+        category: project.category.name,
+        transaction: {
+          count: stats._count.id,
+          totalSum: stats._sum.mount || 0,
+        },
+      };
+    });
+
+    return {
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      projects: projectsWithStats,
+    };
+
+    // return {
+    //   total,
+    //   totalPages: Math.ceil(total / limit),
+    //   currentPage: page,
+    //   projects: projects.map((project) => ({
+    //     ...project,
+    //     image: project.image.fileUrl,
+    //     category: project.category.name,
+    //   })),
+    // };
+  }
+
 
   async getProjectDataForId(id: string) {
     console.log("entre");
