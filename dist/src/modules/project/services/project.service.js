@@ -133,7 +133,7 @@ let ProjectService = class ProjectService {
                 category: project.category.name,
                 transaction: {
                     count: stats._count.id,
-                    totalSum: stats._sum.mount || 0,
+                    totalSum: stats._sum.mount / 100 || 0,
                 },
             };
         });
@@ -186,7 +186,7 @@ let ProjectService = class ProjectService {
                 category: project.category.name,
                 transaction: {
                     count: stats._count.id,
-                    totalSum: stats._sum.mount || 0,
+                    totalSum: stats._sum.mount / 100 || 0,
                 },
             };
         });
@@ -242,7 +242,7 @@ let ProjectService = class ProjectService {
                 ...project,
                 transaction: {
                     count: transaction._count.id,
-                    totalSum: transaction._sum.mount || 0,
+                    totalSum: transaction._sum.mount / 100 || 0,
                 },
                 image: project.image.fileUrl,
                 category: project.category.name,
@@ -295,7 +295,7 @@ let ProjectService = class ProjectService {
                 category: project.category.name,
                 transaction: {
                     count: stats._count.id,
-                    totalSum: stats._sum.mount || 0,
+                    totalSum: stats._sum.mount / 100 || 0,
                 },
             };
         });

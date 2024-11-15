@@ -33,7 +33,6 @@ let ProjectController = class ProjectController {
         return this.projectService.findByStatus(page, limit);
     }
     async getListProjectsUser(id, page = 1, limit = 10) {
-        console.log('🚀 ~ ProjectController ~ getListProjectsUser ~ id:', id);
         return this.projectService.findByUser(id, page, limit);
     }
     async getListProjectsInversor(id, page = 1, limit = 10) {
