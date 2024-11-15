@@ -26,29 +26,22 @@ export declare class ProjectService {
     isValidUUID(uuid: string): boolean;
     findById(id: string): Promise<any>;
     getProjectDataForId(id: string): Promise<void | ({
-        image: {
+        history: ({
+            projectHistory: {
+                id: string;
+                fileName: string;
+                fileType: string;
+                fileSize: number;
+                fileUrl: string;
+                uploadedAt: Date;
+            };
+        } & {
             id: string;
-            fileName: string;
-            fileType: string;
-            fileSize: number;
-            fileUrl: string;
-            uploadedAt: Date;
-        };
-        category: {
-            id: string;
-            created_by: string | null;
-            created_at: Date;
-            modified_by: string | null;
-            updated_at: Date;
-            status: boolean;
-            listType_id: string;
-            code: string | null;
-            name: string;
-            description: string;
-            meta: string | null;
-            order: number | null;
-            parentId: string | null;
-        };
+            risksChallenges: string;
+            aiUsage: boolean;
+            projectHistoryId: string;
+            projectId: string;
+        })[];
         rewards: ({
             elements: ({
                 image: {
@@ -78,22 +71,29 @@ export declare class ProjectService {
             projectId: string;
             imageId: string | null;
         })[];
-        history: ({
-            projectHistory: {
-                id: string;
-                fileName: string;
-                fileType: string;
-                fileSize: number;
-                fileUrl: string;
-                uploadedAt: Date;
-            };
-        } & {
+        image: {
             id: string;
-            risksChallenges: string;
-            aiUsage: boolean;
-            projectHistoryId: string;
-            projectId: string;
-        })[];
+            fileName: string;
+            fileType: string;
+            fileSize: number;
+            fileUrl: string;
+            uploadedAt: Date;
+        };
+        category: {
+            id: string;
+            created_by: string | null;
+            created_at: Date;
+            modified_by: string | null;
+            updated_at: Date;
+            status: boolean;
+            listType_id: string;
+            code: string | null;
+            name: string;
+            description: string;
+            meta: string | null;
+            order: number | null;
+            parentId: string | null;
+        };
     } & {
         id: string;
         title: string;
