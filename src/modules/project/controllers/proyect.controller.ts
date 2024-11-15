@@ -49,6 +49,15 @@ export class ProjectController {
     return this.projectService.findByStatus(page, limit);
   }
 
+  @Get("listByUser")
+  @ApiOperation({
+    summary: "Lista todos los proyectos",
+  })
+  async getListProjectsUser(@Query("id") id, @Query("page") page = 1, @Query("limit") limit = 10) {
+    console.log('🚀 ~ ProjectController ~ getListProjectsUser ~ id:', id)
+    return this.projectService.findByUser(id, page, limit);
+  }
+
   @Get("project")
   @ApiOperation({
     summary: "Proyecto por id",
