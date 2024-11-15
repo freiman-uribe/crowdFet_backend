@@ -25,23 +25,31 @@ export declare class ProjectService {
     findByStatus(page?: number, limit?: number): Promise<any>;
     isValidUUID(uuid: string): boolean;
     findById(id: string): Promise<any>;
+    findByUser(id: string, page?: number, limit?: number): Promise<any>;
     getProjectDataForId(id: string): Promise<void | ({
-        history: ({
-            projectHistory: {
-                id: string;
-                fileName: string;
-                fileType: string;
-                fileSize: number;
-                fileUrl: string;
-                uploadedAt: Date;
-            };
-        } & {
+        image: {
             id: string;
-            risksChallenges: string;
-            aiUsage: boolean;
-            projectHistoryId: string;
-            projectId: string;
-        })[];
+            fileName: string;
+            fileType: string;
+            fileSize: number;
+            fileUrl: string;
+            uploadedAt: Date;
+        };
+        category: {
+            id: string;
+            created_by: string | null;
+            created_at: Date;
+            modified_by: string | null;
+            updated_at: Date;
+            status: boolean;
+            listType_id: string;
+            code: string | null;
+            name: string;
+            description: string;
+            meta: string | null;
+            order: number | null;
+            parentId: string | null;
+        };
         rewards: ({
             elements: ({
                 image: {
@@ -71,29 +79,22 @@ export declare class ProjectService {
             projectId: string;
             imageId: string | null;
         })[];
-        image: {
+        history: ({
+            projectHistory: {
+                id: string;
+                fileName: string;
+                fileType: string;
+                fileSize: number;
+                fileUrl: string;
+                uploadedAt: Date;
+            };
+        } & {
             id: string;
-            fileName: string;
-            fileType: string;
-            fileSize: number;
-            fileUrl: string;
-            uploadedAt: Date;
-        };
-        category: {
-            id: string;
-            created_by: string | null;
-            created_at: Date;
-            modified_by: string | null;
-            updated_at: Date;
-            status: boolean;
-            listType_id: string;
-            code: string | null;
-            name: string;
-            description: string;
-            meta: string | null;
-            order: number | null;
-            parentId: string | null;
-        };
+            risksChallenges: string;
+            aiUsage: boolean;
+            projectHistoryId: string;
+            projectId: string;
+        })[];
     } & {
         id: string;
         title: string;
