@@ -306,6 +306,70 @@ let ProjectService = class ProjectService {
             projects: projectsWithStats,
         };
     }
+    async findByiInversor(id, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const take = Number(limit);
+        const [projects, total] = await Promise.all([
+            this.prisma.project.findMany({
+                skip,
+                take,
+                include: { category: true, image: true, transactions: {
+                        where: {
+                            userId: id,
+                        },
+                        select: {
+                            mount: true
+                        }
+                    } },
+                where: {
+                    transactions: {
+                        some: {
+                            userId: id,
+                        },
+                    }
+                },
+            }),
+            this.prisma.project.count({
+                where: {
+                    userId: id,
+                },
+            }),
+        ]);
+        const transactionStats = await this.prisma.transactions.groupBy({
+            by: ["projectId"],
+            where: {
+                statusTransaction: "APPROVED",
+            },
+            _count: {
+                id: true,
+            },
+            _sum: {
+                mount: true,
+            },
+        });
+        const statsMap = new Map(transactionStats.map((stat) => [stat.projectId, stat]));
+        const projectsWithStats = projects.map((project) => {
+            const stats = statsMap.get(project.id) || {
+                _count: { id: 0 },
+                _sum: { mount: 0 },
+            };
+            return {
+                ...project,
+                image: project.image.fileUrl,
+                category: project.category.name,
+                transaction: {
+                    count: stats._count.id,
+                    totalSum: stats._sum.mount || 0,
+                },
+            };
+        });
+        return {
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            projects: projectsWithStats,
+        };
+    }
     async getProjectDataForId(id) {
         console.log("entre");
         return await this.prisma.project

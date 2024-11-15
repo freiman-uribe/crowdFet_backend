@@ -26,6 +26,7 @@ export declare class ProjectService {
     isValidUUID(uuid: string): boolean;
     findById(id: string): Promise<any>;
     findByUser(id: string, page?: number, limit?: number): Promise<any>;
+    findByiInversor(id: string, page?: number, limit?: number): Promise<any>;
     getProjectDataForId(id: string): Promise<void | ({
         image: {
             id: string;

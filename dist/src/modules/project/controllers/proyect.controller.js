@@ -36,6 +36,10 @@ let ProjectController = class ProjectController {
         console.log('🚀 ~ ProjectController ~ getListProjectsUser ~ id:', id);
         return this.projectService.findByUser(id, page, limit);
     }
+    async getListProjectsInversor(id, page = 1, limit = 10) {
+        console.log('🚀 ~ ProjectController ~ getListProjectsUser ~ id:', id);
+        return this.projectService.findByiInversor(id, page, limit);
+    }
     async getProjectId(id) {
         return this.projectService.findById(id);
     }
@@ -95,6 +99,18 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "getListProjectsUser", null);
+__decorate([
+    (0, common_1.Get)("listByInversor"),
+    (0, swagger_1.ApiOperation)({
+        summary: "Lista todos los proyectos",
+    }),
+    __param(0, (0, common_1.Query)("id")),
+    __param(1, (0, common_1.Query)("page")),
+    __param(2, (0, common_1.Query)("limit")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getListProjectsInversor", null);
 __decorate([
     (0, common_1.Get)("project"),
     (0, swagger_1.ApiOperation)({

@@ -22,6 +22,7 @@ export declare class ProjectController {
     getProjects(page?: number, limit?: number): Promise<any>;
     getListProjects(page?: number, limit?: number): Promise<any>;
     getListProjectsUser(id: any, page?: number, limit?: number): Promise<any>;
+    getListProjectsInversor(id: any, page?: number, limit?: number): Promise<any>;
     getProjectId(id: any): Promise<any>;
     getProject(id: string): Promise<void | ({
         image: {
