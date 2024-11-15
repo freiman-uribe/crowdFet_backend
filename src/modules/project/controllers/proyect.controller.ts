@@ -1,17 +1,19 @@
 
-import { Body, Controller, ParseFilePipe, Get, Post, Query, UploadedFiles, UseInterceptors, Param } from '@nestjs/common';
+import { Body, Controller, ParseFilePipe, Get, Post, Query, UploadedFiles, UseInterceptors, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateProjectDto } from '../dto/proyect.dto';
 import { ProjectService } from '../services/project.service';
 import { IMulterFile } from 'src/types/multer';
 import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Project } from "@prisma/client";
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 
 interface FilesProject  {
   file: IMulterFile
 }
 @Controller("project")
 @ApiTags("Controlador de las opciones comunes")
+// @UseGuards(AuthGuard)
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 

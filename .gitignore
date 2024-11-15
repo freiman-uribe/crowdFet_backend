@@ -23,6 +23,7 @@ yarn-error.log*
 # Optional npm cache directory
 .npm
 
+dist/
 # Optional eslint cache
 .eslintcache
 

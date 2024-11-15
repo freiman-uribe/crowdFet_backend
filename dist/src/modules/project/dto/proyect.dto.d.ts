@@ -14,4 +14,5 @@ export declare class CreateProjectDto {
     elements: any[];
     rewards: any[];
     history: any;
+    userId: string;
 }

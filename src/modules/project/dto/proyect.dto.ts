@@ -50,4 +50,5 @@ export class CreateProjectDto {
   rewards: any[]
 
   history: any
+  userId: string
 }

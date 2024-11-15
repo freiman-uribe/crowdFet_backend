@@ -58,6 +58,7 @@ export class ProjectService {
           subCategoryId: data.subCategoryId,
           deparmentId: data.deparment,
           municipalityId: data.municipality,
+          userId: data.userId,
           history: {
             create: {
               risksChallenges: data.history.riesgos,
