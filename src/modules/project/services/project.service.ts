@@ -356,7 +356,11 @@ export class ProjectService {
     }
   }
 
-  async findByUser(id: string, page: number = 1, limit: number = 10): Promise<any> {
+  async findByUser(
+    id: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<any> {
     //  async findAll(page: number = 1, limit: number = 10): Promise<any> {
     const skip = (page - 1) * limit;
     const take = Number(limit);
@@ -432,7 +436,11 @@ export class ProjectService {
     // };
   }
 
-  async findByiInversor(id: string, page: number = 1, limit: number = 10): Promise<any> {
+  async findByiInversor(
+    id: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<any> {
     //  async findAll(page: number = 1, limit: number = 10): Promise<any> {
     const skip = (page - 1) * limit;
     const take = Number(limit);
@@ -441,20 +449,24 @@ export class ProjectService {
       this.prisma.project.findMany({
         skip,
         take,
-        include: { category: true, image: true, transactions: {
-          where: {
-            userId: id,
+        include: {
+          category: true,
+          image: true,
+          transactions: {
+            where: {
+              userId: id,
+            },
+            select: {
+              mount: true,
+            },
           },
-          select: {
-            mount: true
-          }
-        } },
+        },
         where: {
           transactions: {
             some: {
               userId: id,
             },
-          }
+          },
         },
       }),
       this.prisma.project.count({
@@ -519,24 +531,81 @@ export class ProjectService {
     // };
   }
 
+  async findInversores(
+    id: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<any> {
+    //  async findAll(page: number = 1, limit: number = 10): Promise<any> {
+    // const skip = (page - 1) * limit;
+    // const take = Number(limit);
+
+    // projectId;
+    try {
+       const [transacciones, total] = await Promise.all([
+        this.prisma.transactions.findMany({
+          include: { project: true, user: true },
+          where: {
+            projectId: id,
+            statusTransaction: "APPROVED",
+          },
+        }),
+      this.prisma.transactions.count({
+        where: {
+            projectId: id,
+            statusTransaction: "APPROVED",
+        },
+      }), // Total de proyectos
+    ])
+
+      const data = transacciones.map(({ mount, user, project }) => {
+        return {
+          mount,
+          name: user.full_name,
+          email: user.email,
+          project: project.title,
+          projectId: project.id,
+        };
+      });
+      console.log("🚀 ~ //findAll ~ transacciones:", {
+        data,
+        total,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      });
+      return {
+        data,
+        total,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error('error>>', error);
+    }
+  }
 
   async getProjectDataForId(id: string) {
     console.log("entre");
     return await this.prisma.project
       .findUnique({
-        include: { category: true, image: true, rewards: {
-          include: {
-            elements: {
-              include: {
-                image: true
-              }
-            }
-          }
-        }, history: {
-          include: {
-            projectHistory: true
-          }
-        } },
+        include: {
+          category: true,
+          image: true,
+          rewards: {
+            include: {
+              elements: {
+                include: {
+                  image: true,
+                },
+              },
+            },
+          },
+          history: {
+            include: {
+              projectHistory: true,
+            },
+          },
+        },
         where: {
           id: id,
         },
