@@ -138,16 +138,60 @@ export class ProjectService {
       this.prisma.project.count(), // Total de proyectos
     ]);
 
+    // Obtener conteo y suma de transacciones para cada proyecto
+    const transactionStats = await this.prisma.transactions.groupBy({
+      by: ["projectId"],
+      where: {
+        statusTransaction: "APPROVED",
+      },
+      _count: {
+        id: true,
+      },
+      _sum: {
+        mount: true,
+      },
+    });
+
+    // Crear un mapa para acceder rápidamente a las estadísticas por projectId
+    const statsMap = new Map(
+      transactionStats.map((stat) => [stat.projectId, stat])
+    );
+
+    // Mapear los proyectos con los datos adicionales
+    const projectsWithStats = projects.map((project) => {
+      const stats = statsMap.get(project.id) || {
+        _count: { id: 0 },
+        _sum: { mount: 0 },
+      };
+      return {
+        ...project,
+        image: project.image.fileUrl,
+        category: project.category.name,
+        transaction: {
+          count: stats._count.id,
+          totalSum: stats._sum.mount || 0,
+        },
+      };
+    });
+
+
     return {
       total,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      projects: projects.map((project) => ({
-        ...project,
-        image: project.image.fileUrl,
-        category: project.category.name,
-      })),
+      projects: projectsWithStats,
     };
+
+    // return {
+    //   total,
+    //   totalPages: Math.ceil(total / limit),
+    //   currentPage: page,
+    //   projects: projects.map((project) => ({
+    //     ...project,
+    //     image: project.image.fileUrl,
+    //     category: project.category.name,
+    //   })),
+    // };
   }
 
   // async findByStatus(page: number = 1, limit: number = 10): Promise<any> {
